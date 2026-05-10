@@ -1,0 +1,39 @@
+﻿===== JOB PORTAL API TEST REPORT =====
+Time: 04/19/2026 11:09:45
+Server: http://localhost:5000
+
+[1] GET /api/health
+  ✓ Status: 200 OK
+  Response: @{message=Server is running}
+
+[2] GET /api/jobs
+  ✓ Status: 200 OK
+  Jobs Found: 10
+  First Job ID: 69e467918c05b666775b0c6c
+  First Job Title: AWS Solutions Architect
+
+[3] GET /api/companies
+  ✓ Status: 200 OK
+  Companies Found: 
+
+[4] POST /api/auth/signup
+  ✗ FAILED: The remote server returned an error: (400) Bad Request.
+
+[5] POST /api/auth/login
+  ✗ FAILED: The remote server returned an error: (401) Unauthorized.
+
+[6] GET /api/auth/me (Protected)
+  ⊘ Skipped: No token available
+
+[7] GET /api/users/profile (Protected)
+  ⊘ Skipped: No token
+
+[8] GET /api/jobs/{jobId} (if jobs exist)
+  ✓ Status: 200 OK
+  Job ID: 69e467918c05b666775b0c6c
+  Job Title: AWS Solutions Architect
+
+[9] POST /api/jobs/{jobId}/apply (Protected)
+  ⊘ Skipped: Missing jobs or token
+
+===== TEST COMPLETE =====
