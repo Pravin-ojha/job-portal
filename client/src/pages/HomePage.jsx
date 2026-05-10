@@ -1,47 +1,41 @@
 import React from 'react';
-import { Container, Box, Typography, Button, Grid, Card, CardContent, Chip, Rating, Avatar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import WorkIcon from '@mui/icons-material/Work';
-import SearchIcon from '@mui/icons-material/Search';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import PeopleIcon from '@mui/icons-material/People';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import FacebookIcon from '@mui/icons-material/Facebook';
+import { Button } from '@/components/ui/button';
+import { 
+  Search, Briefcase, TrendingUp, MapPin, 
+  DollarSign, Star, CheckCircle, Globe, 
+  Mail, Phone, ArrowRight, Zap, Code, Shield
+} from 'lucide-react';
 
 const HomePage = () => {
   const navigate = useNavigate();
 
   const features = [
     {
-      icon: <SearchIcon sx={{ fontSize: 40, color: '#667eea' }} />,
-      title: 'Search Jobs',
-      description: 'Find your perfect job from thousands of listings',
+      icon: <Search className="h-5 w-5 text-primary" />,
+      title: 'Smart Search',
+      description: 'Find your perfect job from thousands of listings using our AI-powered semantic search engine.',
     },
     {
-      icon: <WorkIcon sx={{ fontSize: 40, color: '#667eea' }} />,
-      title: 'Post Jobs',
-      description: 'Hire the best talent for your organization',
+      icon: <Zap className="h-5 w-5 text-primary" />,
+      title: 'Instant Applications',
+      description: 'Apply to multiple roles with a single click. Your profile is automatically matched to requirements.',
     },
     {
-      icon: <TrendingUpIcon sx={{ fontSize: 40, color: '#667eea' }} />,
-      title: 'Career Growth',
-      description: 'Build your career with opportunities tailored for you',
+      icon: <Shield className="h-5 w-5 text-primary" />,
+      title: 'Verified Companies',
+      description: 'Every employer on our platform is strictly vetted to ensure quality and prevent spam.',
     },
   ];
 
-  // Featured Jobs Data
   const featuredJobs = [
     {
       id: 1,
       title: 'Senior Software Engineer',
       company: 'Google',
-      logo: '🔵',
+      logo: 'G',
       location: 'San Francisco, CA',
-      salary: '$150,000 - $200,000',
+      salary: '$150k - $200k',
       type: 'Full-time',
       tags: ['React', 'Node.js', 'Cloud'],
     },
@@ -49,45 +43,43 @@ const HomePage = () => {
       id: 2,
       title: 'Product Manager',
       company: 'Apple',
-      logo: '🍎',
+      logo: 'A',
       location: 'Cupertino, CA',
-      salary: '$140,000 - $180,000',
+      salary: '$140k - $180k',
       type: 'Full-time',
-      tags: ['Product Strategy', 'Analytics'],
+      tags: ['Product', 'Analytics'],
     },
     {
       id: 3,
       title: 'Data Scientist',
       company: 'Meta',
-      logo: '👁️',
+      logo: 'M',
       location: 'Menlo Park, CA',
-      salary: '$160,000 - $210,000',
+      salary: '$160k - $210k',
       type: 'Full-time',
-      tags: ['Machine Learning', 'Python', 'SQL'],
+      tags: ['ML', 'Python', 'SQL'],
     },
     {
       id: 4,
       title: 'Frontend Developer',
       company: 'Amazon',
-      logo: '🔶',
+      logo: 'A',
       location: 'Seattle, WA',
-      salary: '$130,000 - $170,000',
+      salary: '$130k - $170k',
       type: 'Full-time',
-      tags: ['React', 'TypeScript', 'AWS'],
+      tags: ['React', 'TypeScript'],
     },
   ];
 
-  // Companies Data
   const companies = [
-    { name: 'Google', emoji: '🔵', jobs: 248 },
-    { name: 'Apple', emoji: '🍎', jobs: 156 },
-    { name: 'Microsoft', emoji: '💻', jobs: 189 },
-    { name: 'Amazon', emoji: '🔶', jobs: 312 },
-    { name: 'Meta', emoji: '👁️', jobs: 127 },
-    { name: 'Tesla', emoji: '⚡', jobs: 94 },
+    { name: 'Google', jobs: 248 },
+    { name: 'Apple', jobs: 156 },
+    { name: 'Microsoft', jobs: 189 },
+    { name: 'Amazon', jobs: 312 },
+    { name: 'Meta', jobs: 127 },
+    { name: 'Tesla', jobs: 94 },
   ];
 
-  // Statistics Data
   const stats = [
     { label: 'Active Jobs', value: '5,000+' },
     { label: 'Companies', value: '1,200+' },
@@ -95,431 +87,287 @@ const HomePage = () => {
     { label: 'Placements', value: '10,000+' },
   ];
 
-  // Testimonials Data
-  const testimonials = [
-    {
-      name: 'John Smith',
-      role: 'Senior Developer at Google',
-      company: 'Google',
-      avatar: '👨‍💼',
-      rating: 5,
-      message: 'Found my dream job through this platform. The process was smooth and straightforward!',
-    },
-    {
-      name: 'Sarah Johnson',
-      role: 'HR Manager at Microsoft',
-      company: 'Microsoft',
-      avatar: '👩‍💼',
-      rating: 5,
-      message: 'Best platform for recruiting top talent. We hired 15 talented professionals in just 3 months!',
-    },
-    {
-      name: 'Michael Chen',
-      role: 'Product Manager at Apple',
-      company: 'Apple',
-      avatar: '👨‍💻',
-      rating: 5,
-      message: 'The quality of candidates is exceptional. Highly recommended for any serious recruiter.',
-    },
-  ];
-
   return (
-    <Box>
-      <Container maxWidth="lg">
-        {/* Hero Section */}
-        <Box
-          sx={{
-            textAlign: 'center',
-            py: 8,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: 2,
-            color: '#fff',
-            mb: 8,
-            mt: 2,
+    <div className="flex flex-col bg-white min-h-screen">
+      
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden border-b border-zinc-200">
+        
+        {/* The Firecrawl-style Grid Pattern Background */}
+        <div 
+          className="absolute inset-0 z-0" 
+          style={{
+            backgroundSize: '80px 80px',
+            backgroundImage: `
+              linear-gradient(to right, rgba(228, 228, 231, 0.3) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(228, 228, 231, 0.3) 1px, transparent 1px)
+            `,
+            backgroundPosition: 'center top'
           }}
-        >
-          <Typography variant="h1" sx={{ color: '#fff', mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' } }}>
-            Welcome to JobPortal
-          </Typography>
-          <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
-            Find your dream job or hire top talent today
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: '#fff',
-                color: '#667eea',
-                fontWeight: 'bold',
-                '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.9)' },
-              }}
-              onClick={() => navigate('/jobs')}
-            >
-              Browse Jobs
+        ></div>
+
+        {/* Intersection Dots */}
+        <div 
+          className="absolute inset-0 z-0" 
+          style={{
+            backgroundSize: '80px 80px',
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(161, 161, 170, 0.4) 1.5px, transparent 0)`,
+            backgroundPosition: '-1px -1px'
+          }}
+        ></div>
+        
+        {/* Radial Spotlight to focus center and fade edges */}
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.9)_100%)]"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 via-transparent to-white pointer-events-none"></div>
+
+        {/* Floating Technical Decorators */}
+        <div className="absolute top-20 left-10 md:left-24 text-[10px] font-mono text-zinc-400 opacity-60 hidden md:block">[ STATUS: 200 OK ]</div>
+        <div className="absolute bottom-40 right-10 md:right-24 text-[10px] font-mono text-zinc-400 opacity-60 hidden md:block">{`{ scrape_jobs: true }`}</div>
+        
+        <div className="relative z-10 flex flex-col items-center text-center max-w-5xl mx-auto px-6">
+          <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-semibold tracking-wide text-primary mb-8 animate-in slide-in-from-bottom-4 duration-700 shadow-sm backdrop-blur-sm">
+            <span className="relative flex h-2 w-2 mr-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            Over 5,000 new jobs added this week
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-zinc-900 mb-6 animate-in slide-in-from-bottom-6 duration-700 delay-100 leading-[1.1] z-10">
+            Turn your career into <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-orange-500 to-yellow-400 drop-shadow-sm">LLM-ready data</span>... wait, no. <br/>
+            Find your next role with <span className="text-primary">JobPortal</span>.
+          </h1>
+          
+          <p className="text-lg md:text-xl text-zinc-600 mb-10 max-w-2xl animate-in slide-in-from-bottom-8 duration-700 delay-200 z-10">
+            The ultimate platform to discover opportunities, connect with top companies, and accelerate your career trajectory—built for modern professionals.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-in slide-in-from-bottom-10 duration-700 delay-300 z-10">
+            <Button size="lg" className="h-12 px-8 text-base font-semibold shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all rounded-md" onClick={() => navigate('/jobs')}>
+              Start searching
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              sx={{
-                borderColor: '#fff',
-                color: '#fff',
-                '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
-              }}
-              onClick={() => navigate('/post-job')}
-            >
+            <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold bg-white/80 backdrop-blur-md border-zinc-200 hover:bg-zinc-50 rounded-md text-zinc-700 shadow-sm transition-all" onClick={() => navigate('/post-job')}>
               Post a Job
             </Button>
-          </Box>
-        </Box>
+          </div>
 
-        {/* Statistics Section */}
-        <Box sx={{ mb: 8 }}>
-          <Grid container spacing={3}>
-            {stats.map((stat, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <Card
-                  sx={{
-                    textAlign: 'center',
-                    p: 3,
-                    background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
-                    border: '1px solid #667eea30',
-                  }}
-                >
-                  <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#667eea', mb: 1 }}>
-                    {stat.value}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    {stat.label}
-                  </Typography>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+          {/* Terminal / Code mockup snippet */}
+          <div className="relative mt-20 w-full max-w-3xl animate-in fade-in duration-1000 delay-500 z-10 group">
+            {/* Soft glow behind the terminal */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-orange-400/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition duration-500"></div>
+            
+            <div className="relative rounded-xl border border-zinc-200/50 bg-white/40 p-2 shadow-2xl backdrop-blur-xl">
+              <div className="rounded-lg bg-[#0d0d0d] p-5 text-left font-mono text-sm leading-relaxed overflow-hidden relative border border-white/10 shadow-inner">
+                {/* Subtle terminal noise/grain */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] opacity-20 pointer-events-none"></div>
+                
+                <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-4">
+                  <div className="flex gap-2">
+                    <div className="h-3 w-3 rounded-full bg-[#FF5F56] border border-black/20"></div>
+                    <div className="h-3 w-3 rounded-full bg-[#FFBD2E] border border-black/20"></div>
+                    <div className="h-3 w-3 rounded-full bg-[#27C93F] border border-black/20"></div>
+                  </div>
+                  <div className="text-[10px] text-zinc-500 font-semibold tracking-wider flex items-center gap-2">
+                    <Globe className="h-3 w-3" /> jobportal-api.js
+                  </div>
+                </div>
+                
+                <p className="text-zinc-300"><span className="text-[#FF7B72]">import</span> {'{ JobPortal }'} <span className="text-[#FF7B72]">from</span> <span className="text-[#A5D6FF]">'@jobportal/sdk'</span>;</p>
+                <p className="text-zinc-300 mt-2"><span className="text-[#FF7B72]">const</span> app <span className="text-[#FF7B72]">=</span> <span className="text-[#FF7B72]">new</span> <span className="text-[#D2A8FF]">JobPortal</span>({'{'} apiKey: <span className="text-[#A5D6FF]">'jp_test_8f92k...'</span> {'}'});</p>
+                <p className="text-[#8B949E] mt-5 italic">{'// Find your dream job in 2 lines of code'}</p>
+                <p className="text-zinc-300"><span className="text-[#FF7B72]">const</span> jobs <span className="text-[#FF7B72]">=</span> <span className="text-[#FF7B72]">await</span> app.<span className="text-[#D2A8FF]">search</span>({'{'}</p>
+                <div className="pl-4 border-l border-zinc-800 ml-2 mt-1">
+                  <p className="text-zinc-300">role: <span className="text-[#A5D6FF]">'Software Engineer'</span>,</p>
+                  <p className="text-zinc-300">location: <span className="text-[#A5D6FF]">'Remote'</span>,</p>
+                  <p className="text-zinc-300">minSalary: <span className="text-[#79C0FF]">120000</span>,</p>
+                  <p className="text-zinc-300">skills: [<span className="text-[#A5D6FF]">'React'</span>, <span className="text-[#A5D6FF]">'Node.js'</span>]</p>
+                </div>
+                <p className="text-zinc-300 mt-1">{'}'});</p>
+                
+                <p className="text-[#8B949E] mt-5 italic">{'// Response: 1,243 matching opportunities found in 0.24s.'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        {/* Features Section */}
-        <Box sx={{ mb: 8 }}>
-          <Typography variant="h2" sx={{ textAlign: 'center', mb: 4, fontWeight: 'bold' }}>
-            Why Choose Us?
-          </Typography>
-          <Grid container spacing={3}>
-            {features.map((feature, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Card
-                  sx={{
-                    height: '100%',
-                    textAlign: 'center',
-                    p: 3,
-                    '&:hover': {
-                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
-                      transform: 'translateY(-4px)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  <CardContent>
-                    <Box sx={{ mb: 2 }}>{feature.icon}</Box>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                      {feature.title}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {feature.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-
-        {/* Featured Jobs Section */}
-        <Box sx={{ mb: 8 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-            <Typography variant="h2" sx={{ fontWeight: 'bold' }}>
-              Featured Jobs
-            </Typography>
-            <Button color="primary" onClick={() => navigate('/jobs')}>
-              View All Jobs →
-            </Button>
-          </Box>
-          <Grid container spacing={3}>
-            {featuredJobs.map((job) => (
-              <Grid item xs={12} md={6} key={job.id}>
-                <Card
-                  sx={{
-                    height: '100%',
-                    '&:hover': {
-                      boxShadow: '0 12px 32px rgba(102, 126, 234, 0.2)',
-                      transform: 'translateY(-4px)',
-                    },
-                    transition: 'all 0.3s ease',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => navigate(`/jobs`)}
-                >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                      <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                          {job.title}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <span sx={{ fontSize: '1.2rem' }}>{job.logo}</span>
-                          {job.company}
-                        </Typography>
-                      </Box>
-                      <Chip label={job.type} size="small" color="primary" variant="outlined" />
-                    </Box>
-
-                    <Box sx={{ mb: 2, display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
-                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <LocationOnIcon sx={{ fontSize: 18 }} /> {job.location}
-                      </Typography>
-                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <AttachMoneyIcon sx={{ fontSize: 18 }} /> {job.salary}
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      {job.tags.map((tag, idx) => (
-                        <Chip key={idx} label={tag} size="small" variant="outlined" />
-                      ))}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-
-        {/* Companies Section */}
-        <Box sx={{ mb: 8 }}>
-          <Typography variant="h2" sx={{ textAlign: 'center', mb: 4, fontWeight: 'bold' }}>
-            Trusted by Leading Companies
-          </Typography>
-          <Grid container spacing={3}>
+      {/* Companies Section */}
+      <section className="py-16 bg-white border-b border-border/50">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-8">Trusted by forward-thinking companies</p>
+          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
             {companies.map((company, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card
-                  sx={{
-                    textAlign: 'center',
-                    p: 4,
-                    '&:hover': {
-                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
-                      transform: 'scale(1.02)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  <Typography sx={{ fontSize: '3rem', mb: 2 }}>{company.emoji}</Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    {company.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {company.jobs} Active Jobs
-                  </Typography>
-                </Card>
-              </Grid>
+              <div key={index} className="flex items-center gap-2">
+                <span className="font-bold text-xl text-foreground">{company.name}</span>
+              </div>
             ))}
-          </Grid>
-        </Box>
+          </div>
+        </div>
+      </section>
 
-        {/* Testimonials Section */}
-        <Box sx={{ mb: 8 }}>
-          <Typography variant="h2" sx={{ textAlign: 'center', mb: 4, fontWeight: 'bold' }}>
-            What Our Users Say
-          </Typography>
-          <Grid container spacing={3}>
-            {testimonials.map((testimonial, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Card
-                  sx={{
-                    height: '100%',
-                    p: 3,
-                    background: 'linear-gradient(135deg, #667eea10 0%, #764ba210 100%)',
-                    border: '1px solid #667eea30',
-                  }}
-                >
-                  <Box sx={{ mb: 2 }}>
-                    <Rating value={testimonial.rating} readOnly sx={{ mb: 1 }} />
-                  </Box>
-                  <Typography variant="body1" sx={{ mb: 2, fontStyle: 'italic' }}>
-                    "{testimonial.message}"
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Avatar sx={{ fontSize: '1.5rem', width: 40, height: 40, background: '#667eea20' }}>
-                      {testimonial.avatar}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                        {testimonial.name}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {testimonial.role}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Card>
-              </Grid>
+      {/* Features Section */}
+      <section className="py-24 bg-muted/50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">Why use JobPortal?</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Everything you need to find the perfect job or hire the best talent, wrapped in a developer-friendly experience.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <div key={index} className="p-8 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md hover:border-primary/20 transition-all group">
+                <div className="mb-6 inline-flex p-3 rounded-xl bg-primary/10 group-hover:scale-110 transition-transform">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              </div>
             ))}
-          </Grid>
-        </Box>
+          </div>
+        </div>
+      </section>
 
-        {/* CTA Section */}
-        <Box
-          sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: 2,
-            p: 6,
-            textAlign: 'center',
-            color: '#fff',
-            mb: 8,
-          }}
-        >
-          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2 }}>
-            Ready to Get Started?
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 4, opacity: 0.9 }}>
-            Join thousands of job seekers and employers who are finding success on our platform
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: '#fff',
-                color: '#667eea',
-                fontWeight: 'bold',
-                '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.9)' },
-              }}
-              onClick={() => navigate('/jobs')}
-            >
-              Browse Jobs Now
+      {/* Featured Jobs Section */}
+      <section className="py-24 bg-white border-y border-border/50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">Latest Opportunities</h2>
+              <p className="text-lg text-muted-foreground">Discover fresh roles from top-tier engineering teams.</p>
+            </div>
+            <Button variant="outline" className="border-border text-foreground hover:bg-muted" onClick={() => navigate('/jobs')}>
+              View all {stats[0].value} jobs
             </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              sx={{
-                borderColor: '#fff',
-                color: '#fff',
-                '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
-              }}
-              onClick={() => navigate('/post-job')}
-            >
-              Post Your Job
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            {featuredJobs.map((job) => (
+              <div 
+                key={job.id} 
+                onClick={() => navigate('/jobs')}
+                className="p-6 rounded-xl bg-white border border-border shadow-sm hover:shadow-md hover:border-primary/40 transition-all cursor-pointer group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex gap-4 items-center">
+                      <div className="w-12 h-12 rounded-lg bg-accent border border-border flex items-center justify-center font-bold text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                        {job.logo}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">{job.title}</h3>
+                        <p className="text-muted-foreground text-sm font-medium">{job.company}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-4 mb-6 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1.5 font-medium">
+                      <MapPin className="h-4 w-4 text-muted-foreground" /> {job.location}
+                    </div>
+                    <div className="flex items-center gap-1.5 font-medium">
+                      <DollarSign className="h-4 w-4 text-muted-foreground" /> {job.salary}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
+                  <div className="flex flex-wrap gap-2">
+                    {job.tags.map((tag, idx) => (
+                      <span key={idx} className="px-2.5 py-1 rounded-md text-xs font-semibold bg-accent text-muted-foreground">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-xs font-bold text-primary flex items-center">
+                    Apply <ArrowRight className="ml-1 h-3 w-3" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 bg-primary/5 border-b border-primary/10">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground mb-6">
+            Ready to crawl the job market?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+            Join thousands of developers and companies already using JobPortal to build their engineering teams.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button size="lg" className="h-12 px-8 text-base font-semibold shadow-lg shadow-primary/20" onClick={() => navigate('/signup')}>
+              Get started for free
             </Button>
-          </Box>
-        </Box>
-      </Container>
+            <Button size="lg" variant="outline" className="h-12 px-8 border-border text-foreground bg-white hover:bg-muted" onClick={() => navigate('/contact')}>
+              Talk to sales
+            </Button>
+          </div>
+        </div>
+      </section>
 
-      {/* Footer Section */}
-      <Box sx={{ background: '#1a1a2e', color: '#fff', py: 6, mt: 4 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={4} sx={{ mb: 4 }}>
-            {/* Company Info */}
-            <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                JobPortal
-              </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.8, mb: 2 }}>
-                Your trusted platform for finding and hiring talent worldwide.
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <LinkedInIcon sx={{ cursor: 'pointer', '&:hover': { opacity: 0.7 } }} />
-                <TwitterIcon sx={{ cursor: 'pointer', '&:hover': { opacity: 0.7 } }} />
-                <FacebookIcon sx={{ cursor: 'pointer', '&:hover': { opacity: 0.7 } }} />
-              </Box>
-            </Grid>
+      {/* Footer */}
+      <footer className="bg-white pt-16 pb-8 border-t border-border">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
+            <div className="col-span-2 lg:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                  <Briefcase className="h-4 w-4 text-primary-foreground" />
+                </div>
+                <span className="font-extrabold text-xl tracking-tight text-foreground">JobPortal</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-6 max-w-xs">
+                The modern platform for finding and hiring talent. Designed for speed, aesthetics, and results.
+              </p>
+              <div className="flex gap-4">
+                <Globe className="h-5 w-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
+                <Mail className="h-5 w-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
+                <Phone className="h-5 w-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-bold mb-4 text-foreground">Product</h4>
+              <ul className="flex flex-col gap-3 text-sm text-muted-foreground font-medium">
+                <li><button onClick={() => navigate('/jobs')} className="hover:text-primary transition-colors">Browse Jobs</button></li>
+                <li><button onClick={() => navigate('/post-job')} className="hover:text-primary transition-colors">Post a Job</button></li>
+                <li><button className="hover:text-primary transition-colors">Companies</button></li>
+                <li><button className="hover:text-primary transition-colors">Pricing</button></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-bold mb-4 text-foreground">Resources</h4>
+              <ul className="flex flex-col gap-3 text-sm text-muted-foreground font-medium">
+                <li><button className="hover:text-primary transition-colors">Documentation</button></li>
+                <li><button className="hover:text-primary transition-colors">Blog</button></li>
+                <li><button className="hover:text-primary transition-colors">Help Center</button></li>
+                <li><button className="hover:text-primary transition-colors">Contact</button></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-bold mb-4 text-foreground">Legal</h4>
+              <ul className="flex flex-col gap-3 text-sm text-muted-foreground font-medium">
+                <li><button className="hover:text-primary transition-colors">Privacy Policy</button></li>
+                <li><button className="hover:text-primary transition-colors">Terms of Service</button></li>
+                <li><button className="hover:text-primary transition-colors">Cookie Policy</button></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="pt-8 border-t border-border text-center text-sm font-medium text-muted-foreground">
+            <p>© {new Date().getFullYear()} JobPortal. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
 
-            {/* Quick Links */}
-            <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Quick Links
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant="body2" sx={{ opacity: 0.8, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                  Browse Jobs
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                  Post a Job
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                  Companies
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                  About Us
-                </Typography>
-              </Box>
-            </Grid>
-
-            {/* Resources */}
-            <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Resources
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant="body2" sx={{ opacity: 0.8, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                  Career Tips
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                  Blog
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                  Help Center
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                  Contact
-                </Typography>
-              </Box>
-            </Grid>
-
-            {/* Contact */}
-            <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Contact Us
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  📧 support@jobportal.com
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  📞 +1 (555) 123-4567
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  📍 San Francisco, CA
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-
-          {/* Footer Bottom */}
-          <Box
-            sx={{
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-              pt: 3,
-              mt: 3,
-              textAlign: 'center',
-            }}
-          >
-            <Typography variant="body2" sx={{ opacity: 0.7, mb: 1 }}>
-              © 2026 JobPortal. All rights reserved.
-            </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-              <Typography variant="caption" sx={{ opacity: 0.7, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                Privacy Policy
-              </Typography>
-              <Typography variant="caption" sx={{ opacity: 0.7, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                Terms of Service
-              </Typography>
-              <Typography variant="caption" sx={{ opacity: 0.7, cursor: 'pointer', '&:hover': { opacity: 1 } }}>
-                Cookie Policy
-              </Typography>
-            </Box>
-          </Box>
-        </Container>
-      </Box>
-    </Box>
+    </div>
   );
 };
 

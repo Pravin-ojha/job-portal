@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
-import {
-  Container,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Grid,
-  Alert,
-  Card,
-  CardContent,
-  CircularProgress,
-} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { jobsAPI } from '../services/api';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { AlertCircle, CheckCircle2, Loader2, Briefcase } from 'lucide-react';
 
 const PostJobPage = () => {
   const navigate = useNavigate();
@@ -73,161 +64,173 @@ const PostJobPage = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography 
-        variant="h4" 
-        sx={{ 
-          mb: 4, 
-          fontWeight: 'bold',
-          color: '#333'
-        }}
-      >
-        Post a New Job
-      </Typography>
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="flex items-center gap-3 mb-8">
+        <Briefcase className="h-8 w-8 text-primary" />
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+          Post a New Job
+        </h1>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-      {success && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          Job posted successfully! Redirecting... 🎉
-        </Alert>
+      {error && (
+        <div className="bg-destructive/15 text-destructive text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-destructive/20">
+          <AlertCircle className="h-5 w-5 mt-0.5" />
+          <span>{error}</span>
+        </div>
       )}
 
-      <Card sx={{ boxShadow: 3 }}>
-        <CardContent sx={{ p: 4 }}>
-          <Box component="form" onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Job Title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  variant="outlined"
-                  disabled={loading}
-                  sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#fff' } }}
-                />
-              </Grid>
+      {success && (
+        <div className="bg-emerald-500/15 text-emerald-500 text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-emerald-500/20">
+          <CheckCircle2 className="h-5 w-5 mt-0.5" />
+          <span>Job posted successfully! Redirecting... 🎉</span>
+        </div>
+      )}
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Company Name"
+      <Card className="bg-card border-border">
+        <CardContent className="p-6 sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="title" className="text-sm font-medium text-foreground">
+                Job Title <span className="text-destructive">*</span>
+              </label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                required
+                disabled={loading}
+                value={formData.title}
+                onChange={handleChange}
+                className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                placeholder="e.g. Senior Frontend Engineer"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label htmlFor="company" className="text-sm font-medium text-foreground">
+                  Company Name <span className="text-destructive">*</span>
+                </label>
+                <input
+                  id="company"
                   name="company"
+                  type="text"
+                  required
+                  disabled={loading}
                   value={formData.company}
                   onChange={handleChange}
-                  required
-                  variant="outlined"
-                  disabled={loading}
-                  sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#fff' } }}
+                  className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                  placeholder="e.g. Acme Corp"
                 />
-              </Grid>
+              </div>
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Location"
+              <div className="space-y-2">
+                <label htmlFor="location" className="text-sm font-medium text-foreground">
+                  Location <span className="text-destructive">*</span>
+                </label>
+                <input
+                  id="location"
                   name="location"
+                  type="text"
+                  required
+                  disabled={loading}
                   value={formData.location}
                   onChange={handleChange}
-                  required
-                  variant="outlined"
-                  disabled={loading}
-                  sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#fff' } }}
+                  className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                  placeholder="e.g. Remote, San Francisco"
                 />
-              </Grid>
+              </div>
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Salary Range"
+              <div className="space-y-2">
+                <label htmlFor="salary" className="text-sm font-medium text-foreground">
+                  Salary Range
+                </label>
+                <input
+                  id="salary"
                   name="salary"
+                  type="text"
+                  disabled={loading}
                   value={formData.salary}
                   onChange={handleChange}
-                  variant="outlined"
+                  className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                   placeholder="e.g., $100k - $150k"
-                  disabled={loading}
-                  sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#fff' } }}
                 />
-              </Grid>
+              </div>
 
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Job Type"
+              <div className="space-y-2">
+                <label htmlFor="jobType" className="text-sm font-medium text-foreground">
+                  Job Type <span className="text-destructive">*</span>
+                </label>
+                <select
+                  id="jobType"
                   name="jobType"
-                  value={formData.jobType}
-                  onChange={handleChange}
-                  select
-                  SelectProps={{ native: true }}
-                  variant="outlined"
                   required
                   disabled={loading}
-                  sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#fff' } }}
+                  value={formData.jobType}
+                  onChange={handleChange}
+                  className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                 >
                   <option value="">Select Job Type</option>
                   <option value="Full-time">Full-time</option>
                   <option value="Part-time">Part-time</option>
                   <option value="Contract">Contract</option>
                   <option value="Internship">Internship</option>
-                </TextField>
-              </Grid>
+                </select>
+              </div>
+            </div>
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Job Description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                  multiline
-                  rows={4}
-                  variant="outlined"
-                  placeholder="Describe the job responsibilities and role"
-                  disabled={loading}
-                  sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#fff' } }}
-                />
-              </Grid>
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-medium text-foreground">
+                Job Description <span className="text-destructive">*</span>
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                required
+                disabled={loading}
+                value={formData.description}
+                onChange={handleChange}
+                rows={4}
+                className="flex w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors min-h-[100px]"
+                placeholder="Describe the job responsibilities and role"
+              />
+            </div>
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Requirements"
-                  name="requirements"
-                  value={formData.requirements}
-                  onChange={handleChange}
-                  required
-                  multiline
-                  rows={3}
-                  variant="outlined"
-                  placeholder="List skills and qualifications required"
-                  disabled={loading}
-                  sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#fff' } }}
-                />
-              </Grid>
+            <div className="space-y-2">
+              <label htmlFor="requirements" className="text-sm font-medium text-foreground">
+                Requirements <span className="text-destructive">*</span>
+              </label>
+              <textarea
+                id="requirements"
+                name="requirements"
+                required
+                disabled={loading}
+                value={formData.requirements}
+                onChange={handleChange}
+                rows={4}
+                className="flex w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors min-h-[100px]"
+                placeholder="List skills and qualifications required"
+              />
+            </div>
 
-              <Grid item xs={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    width: '100%',
-                    fontWeight: 'bold',
-                  }}
-                  disabled={loading}
-                >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Post Job'}
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-11 text-base font-semibold"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Posting...
+                </>
+              ) : (
+                'Post Job'
+              )}
+            </Button>
+          </form>
         </CardContent>
       </Card>
-    </Container>
+    </div>
   );
 };
 

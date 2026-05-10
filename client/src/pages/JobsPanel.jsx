@@ -1,38 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
-import {
-  Container,
-  Box,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Button,
-  CircularProgress,
-  Alert,
-  Stack,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Tab,
-  Tabs,
-  Rating,
-  Link,
-} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import WorkIcon from '@mui/icons-material/Work';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import PersonIcon from '@mui/icons-material/Person';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import PendingIcon from '@mui/icons-material/Pending';
-import ClearIcon from '@mui/icons-material/Clear';
 import { jobsAPI } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   getSavedJobsLocal,
   addSavedJobLocal,
@@ -41,6 +12,19 @@ import {
   addAppliedJobLocal,
   syncUserDataToStorage,
 } from '../services/storageService';
+import {
+  Bookmark,
+  CheckCircle2,
+  MapPin,
+  Briefcase,
+  DollarSign,
+  Calendar,
+  User,
+  Clock,
+  X,
+  AlertCircle,
+  Loader2
+} from 'lucide-react';
 
 const JobsPanel = () => {
   const navigate = useNavigate();
@@ -119,477 +103,340 @@ const JobsPanel = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
-      <Typography variant="h3" sx={{ mb: 1, fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' } }}>
-        My Jobs
-      </Typography>
-      <Typography variant="body1" color="textSecondary" sx={{ mb: 4 }}>
-        Manage your saved and applied jobs in one place
-      </Typography>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2">
+          My Jobs
+        </h1>
+        <p className="text-muted-foreground">
+          Manage your saved and applied jobs in one place
+        </p>
+      </div>
 
       {error && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          {error} Using cached data.
-        </Alert>
+        <div className="bg-warning/15 text-warning text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-warning/20">
+          <AlertCircle className="h-5 w-5 mt-0.5" />
+          <span>{error} Using cached data.</span>
+        </div>
       )}
 
       {/* Stats Cards */}
-      <Grid container spacing={2} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card
-            sx={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              textAlign: 'center',
-              py: 3,
-            }}
-          >
-            <CardContent>
-              <BookmarkIcon sx={{ fontSize: 40, mb: 1 }} />
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                {savedJobs.length}
-              </Typography>
-              <Typography variant="body2">Saved Jobs</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card
-            sx={{
-              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-              color: 'white',
-              textAlign: 'center',
-              py: 3,
-            }}
-          >
-            <CardContent>
-              <CheckCircleIcon sx={{ fontSize: 40, mb: 1 }} />
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                {appliedJobs.length}
-              </Typography>
-              <Typography variant="body2">Applications</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card
-            sx={{
-              background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-              color: 'white',
-              textAlign: 'center',
-              py: 3,
-            }}
-          >
-            <CardContent>
-              <CheckCircleIcon sx={{ fontSize: 40, mb: 1 }} />
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                {appliedJobs.filter(a => a.status === 'accepted').length}
-              </Typography>
-              <Typography variant="body2">Accepted</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+        <Card className="bg-blue-500/10 border-blue-500/20 hover:bg-blue-500/20 transition-all">
+          <CardContent className="p-6 text-center flex flex-col items-center">
+            <Bookmark className="h-10 w-10 text-blue-500 mb-2" />
+            <div className="text-3xl font-bold text-foreground mb-1">{savedJobs.length}</div>
+            <div className="text-sm font-medium text-blue-500/80 uppercase tracking-wider">Saved Jobs</div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/20 transition-all">
+          <CardContent className="p-6 text-center flex flex-col items-center">
+            <Briefcase className="h-10 w-10 text-purple-500 mb-2" />
+            <div className="text-3xl font-bold text-foreground mb-1">{appliedJobs.length}</div>
+            <div className="text-sm font-medium text-purple-500/80 uppercase tracking-wider">Applications</div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20 transition-all">
+          <CardContent className="p-6 text-center flex flex-col items-center">
+            <CheckCircle2 className="h-10 w-10 text-emerald-500 mb-2" />
+            <div className="text-3xl font-bold text-foreground mb-1">
+              {appliedJobs.filter(a => a.status === 'accepted').length}
+            </div>
+            <div className="text-sm font-medium text-emerald-500/80 uppercase tracking-wider">Accepted</div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs
-          value={tabValue}
-          onChange={(e, newValue) => setTabValue(newValue)}
-          sx={{
-            '& .MuiTab-root': {
-              textTransform: 'none',
-              fontSize: { xs: '0.9rem', sm: '1rem' },
-              fontWeight: 500,
-            }
-          }}
+      <div className="flex overflow-x-auto border-b border-border mb-8 pb-px no-scrollbar">
+        <button
+          onClick={() => setTabValue(0)}
+          className={`whitespace-nowrap px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            tabValue === 0
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
+          }`}
         >
-          <Tab label={`Saved Jobs (${savedJobs.length})`} />
-          <Tab label={`My Applications (${appliedJobs.length})`} />
-        </Tabs>
-      </Box>
+          Saved Jobs <span className="ml-1.5 py-0.5 px-2 bg-muted rounded-full text-xs">{savedJobs.length}</span>
+        </button>
+        <button
+          onClick={() => setTabValue(1)}
+          className={`whitespace-nowrap px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            tabValue === 1
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
+          }`}
+        >
+          My Applications <span className="ml-1.5 py-0.5 px-2 bg-muted rounded-full text-xs">{appliedJobs.length}</span>
+        </button>
+      </div>
 
       {/* Saved Jobs Tab */}
       {tabValue === 0 && (
-        <Box>
+        <div>
           {savedJobs.length > 0 ? (
-            <Grid container spacing={2}>
+            <div className="grid grid-cols-1 gap-4">
               {savedJobs.map((job) => {
                 const isApplied = isJobApplied(job._id);
-                const applicationStatus = getApplicationStatus(job._id);
 
                 return (
-                  <Grid item xs={12} key={job._id}>
-                    <Card
-                      sx={{
-                        transition: 'all 0.3s ease',
-                        border: isApplied ? '2px solid #4caf50' : '1px solid #e0e0e0',
-                        background: isApplied ? 'linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%)' : 'transparent',
-                        '&:hover': {
-                          boxShadow: 3,
-                          transform: 'translateY(-2px)',
-                        },
-                      }}
-                    >
-                      <CardContent sx={{ p: { xs: 2, sm: 3 }, pb: 2 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-                          <Box sx={{ flex: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                              <Typography
-                                variant="h6"
-                                sx={{
-                                  fontWeight: 'bold',
-                                  fontSize: { xs: '1.1rem', sm: '1.25rem' },
-                                  cursor: 'pointer',
-                                  '&:hover': { color: '#667eea' }
-                                }}
-                                onClick={() => navigate(`/jobs/${job._id}`)}
-                              >
-                                {job.title}
-                              </Typography>
-                              {isApplied && (
-                                <Chip
-                                  icon={<CheckCircleIcon />}
-                                  label="Applied"
-                                  color="success"
-                                  size="small"
-                                  sx={{ ml: 1 }}
-                                />
-                              )}
-                            </Box>
-
-                            {/* Company and Basic Info */}
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
-                              {job.company && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <PersonIcon sx={{ fontSize: 18, color: '#666' }} />
-                                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                    {job.company}
-                                  </Typography>
-                                </Box>
-                              )}
-                              {job.location && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <LocationOnIcon sx={{ fontSize: 18, color: '#666' }} />
-                                  <Typography variant="body2">
-                                    {job.location}
-                                  </Typography>
-                                </Box>
-                              )}
-                              {job.jobType && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <WorkIcon sx={{ fontSize: 18, color: '#666' }} />
-                                  <Typography variant="body2">
-                                    {job.jobType}
-                                  </Typography>
-                                </Box>
-                              )}
-                            </Box>
-
-                            {/* Salary */}
-                            {(job.salary || job.salaryMin || job.salaryMax) && (
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
-                                <AttachMoneyIcon sx={{ fontSize: 18, color: '#4caf50' }} />
-                                <Typography variant="body2" sx={{ fontWeight: 600, color: '#4caf50' }}>
-                                  ₹{job.salaryMin || job.salary} - ₹{job.salaryMax || job.salary}
-                                </Typography>
-                              </Box>
-                            )}
-
-                            {/* Description Preview */}
-                            {job.description && (
-                              <Typography
-                                variant="body2"
-                                color="textSecondary"
-                                sx={{
-                                  mb: 2,
-                                  display: '-webkit-box',
-                                  WebkitLineClamp: 2,
-                                  WebkitBoxOrient: 'vertical',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                }}
-                              >
-                                {job.description}
-                              </Typography>
-                            )}
-
-                            {/* Tags */}
-                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                              {job.experienceLevel && (
-                                <Chip
-                                  label={job.experienceLevel}
-                                  size="small"
-                                  variant="outlined"
-                                  sx={{ height: 24 }}
-                                />
-                              )}
-                              {job.postedBy && (
-                                <Chip
-                                  label={`by ${job.postedBy.firstName || 'Unknown'}`}
-                                  size="small"
-                                  variant="outlined"
-                                  sx={{ height: 24 }}
-                                />
-                              )}
-                            </Box>
-                          </Box>
-
-                          {/* Action Buttons */}
-                          <Stack
-                            direction={{ xs: 'column', sm: 'row' }}
-                            spacing={1}
-                            sx={{ width: { xs: '100%', sm: 'auto' }, mt: { xs: 2, sm: 0 } }}
-                          >
-                            {isApplied ? (
-                              <Button
-                                variant="contained"
-                                color="success"
-                                size="small"
-                                onClick={() => navigate('/applications')}
-                                sx={{ flex: { xs: 1, sm: 'auto' } }}
-                              >
-                                View Application
-                              </Button>
-                            ) : (
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                size="small"
-                                onClick={() => navigate(`/jobs/${job._id}`)}
-                                sx={{ flex: { xs: 1, sm: 'auto' } }}
-                              >
-                                Apply Now
-                              </Button>
-                            )}
-                            <Button
-                              variant="outlined"
-                              color="error"
-                              size="small"
-                              startIcon={<ClearIcon />}
-                              onClick={() => setUnsaveDialog({ open: true, jobId: job._id })}
-                              sx={{ flex: { xs: 1, sm: 'auto' } }}
+                  <Card key={job._id} className={`bg-card transition-colors ${isApplied ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-border hover:bg-muted'}`}>
+                    <CardContent className="p-6">
+                      <div className="flex flex-col md:flex-row justify-between gap-6">
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 
+                              className="text-xl font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
+                              onClick={() => navigate(`/jobs/${job._id}`)}
                             >
-                              Remove
+                              {job.title}
+                            </h3>
+                            {isApplied && (
+                              <span className="shrink-0 bg-emerald-500 text-black px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" /> Applied
+                              </span>
+                            )}
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-4 mb-4">
+                            {job.company && (
+                              <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                                <User className="w-4 h-4 text-muted-foreground" />
+                                {job.company}
+                              </div>
+                            )}
+                            {job.location && (
+                              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <MapPin className="w-4 h-4" />
+                                {job.location}
+                              </div>
+                            )}
+                            {job.jobType && (
+                              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <Briefcase className="w-4 h-4" />
+                                {job.jobType}
+                              </div>
+                            )}
+                          </div>
+
+                          {(job.salary || job.salaryMin || job.salaryMax) && (
+                            <div className="flex items-center gap-1.5 text-sm font-medium text-emerald-500 mb-4">
+                              <DollarSign className="w-4 h-4" />
+                              ₹{job.salaryMin || job.salary} - ₹{job.salaryMax || job.salary}
+                            </div>
+                          )}
+
+                          {job.description && (
+                            <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                              {job.description}
+                            </p>
+                          )}
+
+                          <div className="flex flex-wrap gap-2">
+                            {job.experienceLevel && (
+                              <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border border-border text-muted-foreground bg-muted">
+                                {job.experienceLevel}
+                              </span>
+                            )}
+                            {job.postedBy && (
+                              <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border border-border text-muted-foreground bg-muted">
+                                by {job.postedBy.firstName || 'Unknown'}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0 justify-start">
+                          {isApplied ? (
+                            <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-primary-foreground" onClick={() => navigate('/applications')}>
+                              View Application
                             </Button>
-                          </Stack>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+                          ) : (
+                            <Button className="w-full" onClick={() => navigate(`/jobs/${job._id}`)}>
+                              Apply Now
+                            </Button>
+                          )}
+                          <Button variant="outline" className="w-full border-border text-destructive hover:bg-destructive/10" onClick={() => setUnsaveDialog({ open: true, jobId: job._id })}>
+                            <X className="w-4 h-4 mr-2" /> Remove
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 );
               })}
-            </Grid>
+            </div>
           ) : (
-            <Card sx={{ textAlign: 'center', py: 6 }}>
-              <CardContent>
-                <BookmarkBorderIcon sx={{ fontSize: 64, color: '#999', mb: 2 }} />
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  No Saved Jobs
-                </Typography>
-                <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                  Start saving jobs you're interested in
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={() => navigate('/jobs')}
-                  sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-                >
-                  Browse Jobs
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="text-center py-16 bg-card rounded-xl border border-border border-dashed">
+              <Bookmark className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">No Saved Jobs</h3>
+              <p className="text-muted-foreground mb-6">Start saving jobs you're interested in</p>
+              <Button onClick={() => navigate('/jobs')}>Browse Jobs</Button>
+            </div>
           )}
-        </Box>
+        </div>
       )}
 
       {/* Applications Tab */}
       {tabValue === 1 && (
-        <Box>
+        <div>
           {appliedJobs.length > 0 ? (
-            <Grid container spacing={2}>
+            <div className="grid grid-cols-1 gap-4">
               {appliedJobs.map((app) => {
                 const jobData = app.jobId && typeof app.jobId === 'object' ? app.jobId : { title: app.title, company: app.company };
                 const jobId = app.jobId?._id || app.jobId;
 
                 return (
-                  <Grid item xs={12} key={app._id || jobId}>
-                    <Card
-                      sx={{
-                        transition: 'all 0.3s ease',
-                        borderLeft: `4px solid ${
-                          app.status === 'accepted' ? '#4caf50' :
-                          app.status === 'rejected' ? '#f44336' :
-                          app.status === 'reviewed' || app.status === 'pending' ? '#ff9800' :
-                          '#2196f3'
-                        }`,
-                        '&:hover': {
-                          boxShadow: 3,
-                          transform: 'translateX(4px)',
-                        },
-                      }}
-                    >
-                      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-                          <Box sx={{ flex: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                              <Typography
-                                variant="h6"
-                                sx={{
-                                  fontWeight: 'bold',
-                                  fontSize: { xs: '1.1rem', sm: '1.25rem' },
-                                  cursor: 'pointer',
-                                  '&:hover': { color: '#667eea' }
-                                }}
-                                onClick={() => navigate(`/jobs/${jobId}`)}
-                              >
-                                {jobData.title}
-                              </Typography>
-                              <Chip
-                                icon={
-                                  app.status === 'accepted' ? <CheckCircleIcon /> :
-                                  app.status === 'rejected' ? <ClearIcon /> :
-                                  <PendingIcon />
-                                }
-                                label={app.status?.charAt(0).toUpperCase() + app.status?.slice(1)}
-                                size="small"
-                                color={
-                                  app.status === 'accepted' ? 'success' :
-                                  app.status === 'rejected' ? 'error' :
-                                  'warning'
-                                }
-                                variant="filled"
-                              />
-                            </Box>
+                  <Card 
+                    key={app._id || jobId} 
+                    className={`bg-card border-l-4 hover:bg-muted transition-all ${
+                      app.status === 'accepted' ? 'border-l-emerald-500' :
+                      app.status === 'rejected' ? 'border-l-destructive' :
+                      app.status === 'reviewed' || app.status === 'pending' ? 'border-l-amber-500' :
+                      'border-l-blue-500'
+                    }`}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex flex-col md:flex-row justify-between gap-6">
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 
+                              className="text-xl font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
+                              onClick={() => navigate(`/jobs/${jobId}`)}
+                            >
+                              {jobData.title}
+                            </h3>
+                            <span className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold ${
+                              app.status === 'accepted' ? 'bg-emerald-500/10 text-emerald-500' :
+                              app.status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+                              'bg-amber-500/10 text-amber-500'
+                            }`}>
+                              {app.status === 'accepted' ? <CheckCircle2 className="w-3.5 h-3.5" /> :
+                               app.status === 'rejected' ? <X className="w-3.5 h-3.5" /> :
+                               <Clock className="w-3.5 h-3.5" />}
+                              {app.status?.charAt(0).toUpperCase() + app.status?.slice(1)}
+                            </span>
+                          </div>
 
-                            {/* Company and Basic Info */}
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
-                              {jobData.company && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <PersonIcon sx={{ fontSize: 18, color: '#666' }} />
-                                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                    {jobData.company}
-                                  </Typography>
-                                </Box>
-                              )}
-                              {app.location && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <LocationOnIcon sx={{ fontSize: 18, color: '#666' }} />
-                                  <Typography variant="body2">
-                                    {app.location}
-                                  </Typography>
-                                </Box>
-                              )}
-                              {app.jobType && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <WorkIcon sx={{ fontSize: 18, color: '#666' }} />
-                                  <Typography variant="body2">
-                                    {app.jobType}
-                                  </Typography>
-                                </Box>
-                              )}
-                            </Box>
-
-                            {/* Applied Date */}
-                            {app.appliedAt && (
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
-                                <DateRangeIcon sx={{ fontSize: 18, color: '#999' }} />
-                                <Typography variant="body2" color="textSecondary">
-                                  Applied on {new Date(app.appliedAt).toLocaleDateString()}
-                                </Typography>
-                              </Box>
+                          <div className="flex flex-wrap gap-4 mb-4">
+                            {jobData.company && (
+                              <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                                <User className="w-4 h-4 text-muted-foreground" />
+                                {jobData.company}
+                              </div>
                             )}
-
-                            {/* Application Details */}
-                            {(app.coverLetter || app.phone || app.yearsOfExperience) && (
-                              <Box sx={{ mt: 2, p: 1.5, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-                                {app.phone && (
-                                  <Typography variant="caption" display="block" sx={{ mb: 0.5 }}>
-                                    <strong>Phone:</strong> {app.phone}
-                                  </Typography>
-                                )}
-                                {app.yearsOfExperience && (
-                                  <Typography variant="caption" display="block" sx={{ mb: 0.5 }}>
-                                    <strong>Experience:</strong> {app.yearsOfExperience} years
-                                  </Typography>
-                                )}
-                                {app.coverLetter && (
-                                  <Typography variant="caption" display="block" sx={{ 
-                                    display: '-webkit-box',
-                                    WebkitLineClamp: 2,
-                                    WebkitBoxOrient: 'vertical',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                  }}>
-                                    <strong>Cover Letter:</strong> {app.coverLetter}
-                                  </Typography>
-                                )}
-                              </Box>
+                            {app.location && (
+                              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <MapPin className="w-4 h-4" />
+                                {app.location}
+                              </div>
                             )}
-                          </Box>
+                            {app.jobType && (
+                              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <Briefcase className="w-4 h-4" />
+                                {app.jobType}
+                              </div>
+                            )}
+                          </div>
 
-                          {/* Action Button */}
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            onClick={() => navigate(`/jobs/${jobId}`)}
-                            sx={{ mt: { xs: 2, sm: 0 } }}
-                          >
+                          {app.appliedAt && (
+                            <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+                              <Calendar className="w-4 h-4" />
+                              Applied on {new Date(app.appliedAt).toLocaleDateString()}
+                            </div>
+                          )}
+
+                          {(app.coverLetter || app.phone || app.yearsOfExperience) && (
+                            <div className="mt-4 p-4 bg-muted rounded-lg border border-border space-y-2">
+                              {app.phone && (
+                                <p className="text-sm text-foreground">
+                                  <strong className="text-muted-foreground mr-2">Phone:</strong> {app.phone}
+                                </p>
+                              )}
+                              {app.yearsOfExperience && (
+                                <p className="text-sm text-foreground">
+                                  <strong className="text-muted-foreground mr-2">Experience:</strong> {app.yearsOfExperience} years
+                                </p>
+                              )}
+                              {app.coverLetter && (
+                                <p className="text-sm text-foreground line-clamp-2">
+                                  <strong className="text-muted-foreground mr-2">Cover Letter:</strong> {app.coverLetter}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="shrink-0 w-full md:w-auto flex flex-col justify-start">
+                          <Button variant="outline" className="w-full md:w-auto border-border" onClick={() => navigate(`/jobs/${jobId}`)}>
                             View Job
                           </Button>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 );
               })}
-            </Grid>
+            </div>
           ) : (
-            <Card sx={{ textAlign: 'center', py: 6 }}>
-              <CardContent>
-                <PendingIcon sx={{ fontSize: 64, color: '#999', mb: 2 }} />
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  No Applications Yet
-                </Typography>
-                <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                  Apply for jobs to track your applications here
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={() => navigate('/jobs')}
-                  sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-                >
-                  Find Jobs
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="text-center py-16 bg-card rounded-xl border border-border border-dashed">
+              <Clock className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">No Applications Yet</h3>
+              <p className="text-muted-foreground mb-6">Apply for jobs to track your applications here</p>
+              <Button onClick={() => navigate('/jobs')}>Find Jobs</Button>
+            </div>
           )}
-        </Box>
+        </div>
       )}
 
       {/* Unsave Confirmation Dialog */}
-      <Dialog open={unsaveDialog.open} onClose={() => setUnsaveDialog({ open: false, jobId: null })}>
-        <DialogTitle>Remove Saved Job</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to remove this job from your saved list?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setUnsaveDialog({ open: false, jobId: null })}>Cancel</Button>
-          <Button onClick={handleUnsaveJob} variant="contained" color="error">
-            Remove
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {unsaveDialog.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-6 border-b border-border bg-card">
+              <h2 className="text-xl font-bold text-foreground">Remove Saved Job</h2>
+              <button 
+                onClick={() => setUnsaveDialog({ open: false, jobId: null })}
+                className="text-muted-foreground hover:text-foreground hover:bg-accent p-2 rounded-full transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-muted-foreground">
+                Are you sure you want to remove this job from your saved list?
+              </p>
+            </div>
+
+            <div className="p-6 border-t border-border bg-card flex justify-end gap-3 mt-auto">
+              <Button 
+                variant="outline" 
+                onClick={() => setUnsaveDialog({ open: false, jobId: null })} 
+                className="border-border hover:bg-accent"
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={handleUnsaveJob} 
+              >
+                Remove
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

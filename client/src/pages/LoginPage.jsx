@@ -1,20 +1,10 @@
-import React, { useState, useContext } from 'react';
-import {
-  Container,
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Card,
-  CardContent,
-  Link,
-  Alert,
-  CircularProgress,
-  Paper,
-  Divider,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, AlertCircle, Beaker } from 'lucide-react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -24,30 +14,23 @@ const LoginPage = () => {
     password: '',
   });
 
-  // Clear error when component mounts (page is visited)
-  React.useEffect(() => {
+  // Clear error when component mounts
+  useEffect(() => {
     setError(null);
-    console.log('[LoginPage] Mounted');
   }, [setError]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('[LoginPage] Submitting login form:', formData.email);
     try {
-      const result = await login(formData.email, formData.password);
-      console.log('[LoginPage] Login successful, navigating to home');
+      await login(formData.email, formData.password);
       navigate('/');
     } catch (err) {
       console.error('[LoginPage] Login failed:', err.message);
-      // Backend error is already handled by AuthContext
     }
   };
 
@@ -59,141 +42,97 @@ const LoginPage = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ minHeight: '80vh', display: 'flex', alignItems: 'center', py: 4 }}>
-        <Box sx={{ width: '100%' }}>
-          <Card sx={{ width: '100%', mb: 3 }}>
-            <CardContent sx={{ p: 4 }}>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
-                Welcome Back
-              </Typography>
-
-              {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  <Typography variant="body2">{error}</Typography>
-                </Alert>
-              )}
-
-              <Box component="form" onSubmit={handleSubmit}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  name="email"
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        
+        <Card className="border-border bg-card backdrop-blur-sm">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-2xl font-bold tracking-tight">Welcome back</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Enter your credentials to access your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {error && (
+              <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md mb-6 flex items-start gap-2 border border-destructive/20">
+                <AlertCircle className="h-4 w-4 mt-0.5" />
+                <span>{error}</span>
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+                <Input
                   type="email"
+                  name="email"
+                  placeholder="name@example.com"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  variant="outlined"
-                  sx={{ mb: 2 }}
                   disabled={loading}
+                  className="bg-muted border-border focus-visible:ring-primary h-11"
                 />
-
-                <TextField
-                  fullWidth
-                  label="Password"
-                  name="password"
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
+                </div>
+                <Input
                   type="password"
+                  name="password"
+                  placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  variant="outlined"
-                  sx={{ mb: 3 }}
                   disabled={loading}
+                  className="bg-muted border-border focus-visible:ring-primary h-11"
                 />
+              </div>
+              <Button type="submit" className="w-full h-11 text-base" disabled={loading}>
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {loading ? 'Signing in...' : 'Sign In'}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-center border-t border-border pt-6">
+            <div className="text-sm text-muted-foreground">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-primary hover:text-primary/80 hover:underline font-medium transition-colors">
+                Sign up
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
 
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    fontWeight: 'bold',
-                    mb: 2,
-                    height: 48,
-                  }}
-                  disabled={loading}
-                >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
-                </Button>
+        {/* Test Credentials Card */}
+        <Card className="border-border bg-card">
+          <CardHeader className="pb-4 border-b border-border/20">
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+              <Beaker className="h-4 w-4" />
+              Test Credentials
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-3 rounded-lg bg-muted border border-border text-xs">
+              <div className="font-semibold text-foreground mb-1">Job Seeker</div>
+              <div className="text-muted-foreground mb-3 truncate">jobseeker@test.com<br/>password123</div>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs border-border bg-transparent hover:bg-accent" onClick={() => handleTestLogin('jobseeker@test.com')} disabled={loading}>
+                Use Seeker
+              </Button>
+            </div>
+            <div className="p-3 rounded-lg bg-muted border border-border text-xs">
+              <div className="font-semibold text-foreground mb-1">Admin / Employer</div>
+              <div className="text-muted-foreground mb-3 truncate">admin@jobportal.com<br/>password123</div>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs border-border bg-transparent hover:bg-accent" onClick={() => handleTestLogin('admin@jobportal.com')} disabled={loading}>
+                Use Admin
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="body2">
-                    Don't have an account?{' '}
-                    <Link
-                      onClick={() => navigate('/signup')}
-                      sx={{
-                        color: '#667eea',
-                        fontWeight: 'bold',
-                        cursor: 'pointer',
-                        '&:hover': { textDecoration: 'underline' },
-                      }}
-                    >
-                      Sign up here
-                    </Link>
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#667eea' }}>
-                🧪 Test Credentials
-              </Typography>
-              <Typography variant="body2" sx={{ mb: 2, color: '#666' }}>
-                Try these accounts to test the application:
-              </Typography>
-
-              <Box sx={{ mb: 2 }}>
-                <Paper sx={{ p: 2, mb: 2, backgroundColor: '#f0f0f0' }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Job Seeker Account
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
-                    <strong>Email:</strong> jobseeker@test.com
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 2 }}>
-                    <strong>Password:</strong> password123
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    onClick={() => handleTestLogin('jobseeker@test.com')}
-                    disabled={loading}
-                  >
-                    Use This Account
-                  </Button>
-                </Paper>
-
-                <Paper sx={{ p: 2, backgroundColor: '#f0f0f0' }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Admin/Employer Account
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
-                    <strong>Email:</strong> admin@jobportal.com
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 2 }}>
-                    <strong>Password:</strong> password123
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    onClick={() => handleTestLogin('admin@jobportal.com')}
-                    disabled={loading}
-                  >
-                    Use This Account
-                  </Button>
-                </Paper>
-              </Box>
-            </CardContent>
-          </Card>
-        </Box>
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 };
 

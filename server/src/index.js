@@ -18,7 +18,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/job-po
 
 async function startDatabase() {
   let finalUri = MONGODB_URI;
-  if (finalUri.includes('localhost') && process.env.NODE_ENV === 'development') {
+  if (finalUri.includes('localhost')) {
     try {
       const { MongoMemoryServer } = require('mongodb-memory-server');
       const mongoServer = await MongoMemoryServer.create();

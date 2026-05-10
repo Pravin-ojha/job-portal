@@ -1,24 +1,12 @@
 import React, { useState, useContext } from 'react';
-import {
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Stack,
-  Box,
-  Chip,
-  Typography,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import WorkIcon from '@mui/icons-material/Work';
 import { useNavigate } from 'react-router-dom';
+import { Bookmark, Briefcase } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import JobApplicationForm from './JobApplicationForm';
 import { jobsAPI } from '../services/api';
 import { addSavedJobLocal, removeSavedJobLocal } from '../services/storageService';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 const JobCard = ({
   job,
@@ -44,12 +32,12 @@ const JobCard = ({
       if (isJobSaved) {
         await jobsAPI.unsaveJob(job._id);
         removeSavedJobLocal(user._id, job._id);
-        onUnsave(job._id);
+        if (onUnsave) onUnsave(job._id);
         setIsJobSaved(false);
       } else {
         await jobsAPI.saveJob(job._id);
         addSavedJobLocal(user._id, job);
-        onSave(job._id);
+        if (onSave) onSave(job._id);
         setIsJobSaved(true);
       }
     } catch (err) {
@@ -57,10 +45,10 @@ const JobCard = ({
       // Still update locally even if API fails
       if (isJobSaved) {
         removeSavedJobLocal(user._id, job._id);
-        onUnsave(job._id);
+        if (onUnsave) onUnsave(job._id);
       } else {
         addSavedJobLocal(user._id, job);
-        onSave(job._id);
+        if (onSave) onSave(job._id);
       }
       setIsJobSaved(!isJobSaved);
     }
@@ -97,125 +85,101 @@ const JobCard = ({
   const getStatusColor = (status) => {
     switch (status) {
       case 'accepted':
-        return 'success';
+        return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
       case 'rejected':
-        return 'error';
+        return 'bg-destructive/10 text-destructive border-destructive/20';
       case 'pending':
       case 'reviewed':
-        return 'warning';
+        return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
       case 'applied':
-        return 'info';
+        return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
       default:
-        return 'default';
+        return 'bg-accent text-foreground border-border';
     }
   };
 
   return (
-    <Card sx={{ mb: 2, '&:hover': { boxShadow: 3 } }}>
-      <CardContent>
-        <Stack spacing={1} sx={{ mb: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                {job.title}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {job.company}
-              </Typography>
-            </Box>
-            <Tooltip title={isJobSaved ? 'Remove from saved' : 'Save job'}>
-              <IconButton
-                size="small"
-                onClick={handleSave}
-                sx={{ ml: 1 }}
-              >
-                {isJobSaved ? (
-                  <BookmarkIcon color="primary" />
-                ) : (
-                  <BookmarkBorderIcon />
-                )}
-              </IconButton>
-            </Tooltip>
-          </Box>
+    <>
+      <Card className="border-border bg-card hover:bg-muted transition-colors group mb-4">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h3 className="font-semibold text-lg text-foreground leading-none mb-2">{job.title}</h3>
+              <p className="text-sm text-muted-foreground">{job.company}</p>
+            </div>
+            <button
+              onClick={handleSave}
+              className={`p-2 rounded-full transition-colors ${
+                isJobSaved ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+              }`}
+              title={isJobSaved ? 'Remove from saved' : 'Save job'}
+            >
+              <Bookmark className="h-5 w-5" fill={isJobSaved ? 'currentColor' : 'none'} />
+            </button>
+          </div>
 
-          {/* Job Details */}
-          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
-            <Chip
-              label={job.location}
-              variant="outlined"
-              size="small"
-            />
-            <Chip
-              label={job.jobType}
-              variant="outlined"
-              size="small"
-              color="primary"
-            />
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-muted border border-border text-muted-foreground">
+              {job.location}
+            </span>
+            <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-primary/10 border border-primary/20 text-primary">
+              {job.jobType}
+            </span>
             {job.experienceLevel && (
-              <Chip
-                label={job.experienceLevel}
-                variant="outlined"
-                size="small"
-              />
+              <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-muted border border-border text-muted-foreground">
+                {job.experienceLevel}
+              </span>
             )}
-          </Stack>
+          </div>
 
-          {/* Salary */}
           {job.salary && (
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            <div className="text-sm font-medium text-foreground mb-3">
               {job.salary}
-            </Typography>
+            </div>
           )}
 
-          {/* Description Preview */}
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-            {job.description.substring(0, 150)}...
-          </Typography>
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {job.description}
+          </p>
 
-          {/* Application Status */}
           {applicationStatus && (
-            <Box sx={{ mt: 2 }}>
-              <Chip
-                label={`Application: ${applicationStatus}`}
-                color={getStatusColor(applicationStatus)}
-                variant="filled"
-                size="small"
-              />
-            </Box>
+            <div className="mt-4">
+              <span className={`px-2.5 py-1 rounded-md text-xs font-medium border ${getStatusColor(applicationStatus)}`}>
+                Application: {applicationStatus.charAt(0).toUpperCase() + applicationStatus.slice(1)}
+              </span>
+            </div>
           )}
-        </Stack>
-      </CardContent>
-
-      <CardActions>
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => navigate(`/jobs/${job._id}`)}
-        >
-          View Details
-        </Button>
-        <Button
-          size="small"
-          variant="contained"
-          color="primary"
-          onClick={handleApplyClick}
-          disabled={applicationStatus === 'applied' || submittingApplication}
-          startIcon={<WorkIcon />}
-          sx={{ ml: 'auto' }}
-        >
-          {applicationStatus ? 'Already Applied' : 'Apply Now'}
-        </Button>
-      </CardActions>
+        </CardContent>
+        <CardFooter className="p-6 pt-0 flex gap-3">
+          <Button
+            variant="outline"
+            className="flex-1 border-border bg-transparent hover:bg-muted"
+            onClick={() => navigate(`/jobs/${job._id}`)}
+          >
+            View Details
+          </Button>
+          <Button
+            className="flex-1"
+            onClick={handleApplyClick}
+            disabled={applicationStatus === 'applied' || applicationStatus === 'pending' || submittingApplication}
+          >
+            <Briefcase className="mr-2 h-4 w-4" />
+            {applicationStatus ? 'Applied' : 'Apply Now'}
+          </Button>
+        </CardFooter>
+      </Card>
 
       {/* Application Form Modal */}
-      <JobApplicationForm
-        open={showApplicationForm}
-        jobTitle={job.title}
-        onClose={() => setShowApplicationForm(false)}
-        onSubmit={handleApplicationSubmit}
-        loading={submittingApplication}
-      />
-    </Card>
+      {showApplicationForm && (
+        <JobApplicationForm
+          open={showApplicationForm}
+          jobTitle={job.title}
+          onClose={() => setShowApplicationForm(false)}
+          onSubmit={handleApplicationSubmit}
+          loading={submittingApplication}
+        />
+      )}
+    </>
   );
 };
 
