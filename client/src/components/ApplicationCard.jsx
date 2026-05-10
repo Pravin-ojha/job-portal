@@ -1,47 +1,31 @@
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardActions,
-  Box,
-  Typography,
-  Stack,
-  Chip,
-  Button,
-  Grid,
-  Divider,
-  Avatar,
-  Link,
-} from '@mui/material';
-import {
-  Delete as DeleteIcon,
-  OpenInNew as OpenInNewIcon,
-  LocationOn as LocationOnIcon,
-  Work as WorkIcon,
-  CurrencyRupee as CurrencyRupeeIcon,
-  Person as PersonIcon,
-  Phone as PhoneIcon,
-  Language as LanguageIcon,
-  LinkedIn as LinkedInIcon,
-} from '@mui/icons-material';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { 
+  Trash2, 
+  MapPin, 
+  Briefcase, 
+  IndianRupee, 
+  Phone, 
+  Globe 
+} from 'lucide-react';
 
 const ApplicationCard = ({ application, onWithdraw, loading = false, canWithdraw = true }) => {
-  const getStatusColor = (status) => {
+  const getStatusStyles = (status) => {
     switch (status) {
       case 'applied':
-        return 'info';
+        return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
       case 'pending':
-        return 'warning';
       case 'reviewed':
-        return 'warning';
+        return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
       case 'accepted':
-        return 'success';
+        return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
       case 'rejected':
-        return 'error';
+        return 'bg-destructive/10 text-destructive border-destructive/20';
       case 'withdrawn':
-        return 'default';
+        return 'bg-accent text-muted-foreground border-border';
       default:
-        return 'default';
+        return 'bg-accent text-foreground border-border';
     }
   };
 
@@ -53,204 +37,154 @@ const ApplicationCard = ({ application, onWithdraw, loading = false, canWithdraw
     canWithdraw && ['applied', 'pending', 'reviewed'].includes(application.status);
 
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', mb: 2 }}>
-      <CardContent sx={{ pb: 1 }}>
+    <Card className="h-full flex flex-col mb-4 bg-card border-border hover:bg-muted transition-colors">
+      <CardContent className="p-6 flex-grow">
         {/* Header */}
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} sm={8}>
-            <Typography
-              variant="h6"
-              sx={{ fontWeight: 'bold', mb: 0.5, fontSize: '1.1rem' }}
-            >
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-foreground leading-tight mb-1">
               {application.title}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 1.5 }}>
+            </h3>
+            <p className="text-sm text-muted-foreground">
               {application.company}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Chip
-              label={getStatusLabel(application.status)}
-              color={getStatusColor(application.status)}
-              variant="outlined"
-              size="small"
-            />
-          </Grid>
-        </Grid>
+            </p>
+          </div>
+          <div className="shrink-0">
+            <span className={`px-2.5 py-1 rounded-md text-xs font-medium border ${getStatusStyles(application.status)}`}>
+              {getStatusLabel(application.status)}
+            </span>
+          </div>
+        </div>
 
         {/* Location and Job Type */}
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mb: 2 }}>
-          <Chip
-            icon={<LocationOnIcon />}
-            label={application.location}
-            size="small"
-            variant="outlined"
-          />
-          <Chip
-            icon={<WorkIcon />}
-            label={application.jobType}
-            size="small"
-            variant="outlined"
-          />
+        <div className="flex flex-wrap gap-2 mb-6">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-muted border border-border text-muted-foreground">
+            <MapPin className="h-3 w-3" /> {application.location}
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-muted border border-border text-muted-foreground">
+            <Briefcase className="h-3 w-3" /> {application.jobType}
+          </span>
           {application.experienceLevel && (
-            <Chip
-              label={`${application.experienceLevel} Level`}
-              size="small"
-              variant="outlined"
-            />
+            <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-muted border border-border text-muted-foreground">
+              {application.experienceLevel} Level
+            </span>
           )}
           {application.salary && (
-            <Chip
-              icon={<CurrencyRupeeIcon />}
-              label={application.salary}
-              size="small"
-              variant="outlined"
-            />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-muted border border-border text-muted-foreground">
+              <IndianRupee className="h-3 w-3" /> {application.salary}
+            </span>
           )}
-        </Stack>
+        </div>
 
-        <Divider sx={{ my: 2 }} />
+        <div className="h-px w-full bg-border/40 my-4" />
 
         {/* Application Details */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
-            Application Details
-          </Typography>
+        <div className="mb-6 space-y-4">
+          <h4 className="text-sm font-bold text-foreground">Application Details</h4>
 
-          <Stack spacing={1.5}>
+          <div className="space-y-2">
             {/* Applied Date */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="body2" color="textSecondary">
-                Applied On:
-              </Typography>
-              <Typography variant="body2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Applied On:</span>
+              <span className="text-sm text-foreground">
                 {new Date(application.appliedAt).toLocaleDateString()}
-              </Typography>
-            </Box>
+              </span>
+            </div>
 
             {/* Years of Experience */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="body2" color="textSecondary">
-                Years of Experience:
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Years of Experience:</span>
+              <span className="text-sm font-bold text-foreground">
                 {application.yearsOfExperience} years
-              </Typography>
-            </Box>
+              </span>
+            </div>
 
             {/* Contact Information */}
             {application.phone && (
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="body2" color="textSecondary">
-                  Contact:
-                </Typography>
-                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-                  <PhoneIcon sx={{ fontSize: '1rem' }} />
-                  <Typography variant="body2">{application.phone}</Typography>
-                </Stack>
-              </Box>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Contact:</span>
+                <span className="text-sm text-foreground flex items-center gap-1.5">
+                  <Phone className="h-3.5 w-3.5" /> {application.phone}
+                </span>
+              </div>
             )}
+          </div>
 
-            {/* Cover Letter */}
-            {application.coverLetter && (
-              <Box>
-                <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Cover Letter:
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    p: 1,
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: 1,
-                    fontStyle: 'italic',
-                  }}
-                >
-                  {application.coverLetter.substring(0, 200)}
-                  {application.coverLetter.length > 200 ? '...' : ''}
-                </Typography>
-              </Box>
+          {/* Cover Letter */}
+          {application.coverLetter && (
+            <div>
+              <span className="text-xs font-bold text-muted-foreground block mb-1">Cover Letter:</span>
+              <div className="p-3 bg-muted rounded-md border border-border text-sm text-muted-foreground italic">
+                "{application.coverLetter.substring(0, 200)}
+                {application.coverLetter.length > 200 ? '...' : ''}"
+              </div>
+            </div>
+          )}
+
+          {/* Portfolio and LinkedIn */}
+          <div className="flex gap-2 flex-wrap">
+            {application.portfolioUrl && (
+              <a 
+                href={application.portfolioUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2.5 py-1.5 rounded-md"
+              >
+                <Globe className="h-3.5 w-3.5" /> Portfolio
+              </a>
             )}
-
-            {/* Portfolio and LinkedIn */}
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {application.portfolioUrl && (
-                <Button
-                  size="small"
-                  startIcon={<LanguageIcon />}
-                  href={application.portfolioUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Portfolio
-                </Button>
-              )}
-              {application.linkedinUrl && (
-                <Button
-                  size="small"
-                  startIcon={<LinkedInIcon />}
-                  href={application.linkedinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LinkedIn
-                </Button>
-              )}
-            </Box>
-
-            {/* Additional Notes */}
-            {application.notes && (
-              <Box>
-                <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Additional Notes:
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    p: 1,
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: 1,
-                  }}
-                >
-                  {application.notes}
-                </Typography>
-              </Box>
+            {application.linkedinUrl && (
+              <a 
+                href={application.linkedinUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0A66C2] hover:text-[#0A66C2]/80 transition-colors bg-[#0A66C2]/10 px-2.5 py-1.5 rounded-md"
+              >
+                <Globe className="h-3.5 w-3.5" /> LinkedIn
+              </a>
             )}
-          </Stack>
-        </Box>
+          </div>
+
+          {/* Additional Notes */}
+          {application.notes && (
+            <div>
+              <span className="text-xs font-bold text-muted-foreground block mb-1">Additional Notes:</span>
+              <div className="p-3 bg-muted rounded-md border border-border text-sm text-foreground">
+                {application.notes}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Company Info */}
         {application.postedBy && (
-          <Box sx={{ mt: 2, p: 1.5, backgroundColor: '#fafafa', borderRadius: 1 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
-              Posted By
-            </Typography>
-            <Typography variant="body2">
+          <div className="p-4 bg-muted rounded-lg border border-border">
+            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Posted By</h4>
+            <p className="text-sm font-medium text-foreground">
               {application.postedBy.firstName} {application.postedBy.lastName}
-            </Typography>
+            </p>
             {application.postedBy.company && (
-              <Typography variant="body2" color="textSecondary">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {application.postedBy.company}
-              </Typography>
+              </p>
             )}
-          </Box>
+          </div>
         )}
       </CardContent>
 
-      <CardActions sx={{ mt: 'auto', justifyContent: 'space-between' }}>
-        <Box></Box>
+      <CardFooter className="p-6 pt-0 flex justify-end">
         {isWithdrawable && (
           <Button
-            size="small"
-            color="error"
-            startIcon={<DeleteIcon />}
+            variant="destructive"
+            size="sm"
             onClick={() => onWithdraw(application.jobId)}
             disabled={loading}
+            className="flex items-center gap-2"
           >
-            Withdraw
+            <Trash2 className="h-4 w-4" /> Withdraw
           </Button>
         )}
-      </CardActions>
+      </CardFooter>
     </Card>
   );
 };

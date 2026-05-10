@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Rating,
-  Stack,
-  Chip,
-  Typography,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Star, X } from 'lucide-react';
+
+const StarRating = ({ value, onChange, readOnly }) => {
+  return (
+    <div className="flex items-center">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={readOnly}
+          onClick={() => !readOnly && onChange && onChange(star)}
+          className={`${readOnly ? 'cursor-default' : 'cursor-pointer hover:scale-110'} transition-transform p-0.5`}
+        >
+          <Star 
+            className="h-5 w-5" 
+            fill={star <= value ? "#eab308" : "transparent"} 
+            color={star <= value ? "#eab308" : "#52525b"} 
+          />
+        </button>
+      ))}
+    </div>
+  );
+};
 
 const ReviewComponent = ({ reviews, onAddReview, allowReview }) => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -60,190 +70,164 @@ const ReviewComponent = ({ reviews, onAddReview, allowReview }) => {
   };
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
-        Reviews & Ratings
-      </Typography>
-
-      {/* Add Review Button */}
-      {allowReview && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenDialog}
-          sx={{ mb: 3 }}
-        >
-          Add Review
-        </Button>
-      )}
+    <div className="mt-8">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-semibold text-foreground">Reviews & Ratings</h3>
+        
+        {allowReview && (
+          <Button onClick={handleOpenDialog}>
+            Add Review
+          </Button>
+        )}
+      </div>
 
       {/* Reviews List */}
-      <Stack spacing={2}>
+      <div className="space-y-4">
         {reviews && reviews.length > 0 ? (
           reviews.map((review) => (
-            <Card key={review._id}>
-              <CardContent>
-                <Stack spacing={2}>
-                  {/* Header */}
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Avatar>
-                        {review.reviewer?.firstName?.[0]}
-                        {review.reviewer?.lastName?.[0]}
-                      </Avatar>
-                      <Box>
-                        <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                          {review.reviewer?.firstName} {review.reviewer?.lastName}
-                        </Typography>
-                        <Typography variant="caption" color="textSecondary">
-                          {new Date(review.createdAt).toLocaleDateString()}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Rating value={review.rating} readOnly size="small" />
-                  </Box>
+            <Card key={review._id} className="bg-card border-border">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold">
+                      {review.reviewer?.firstName?.[0]}
+                      {review.reviewer?.lastName?.[0]}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-foreground">
+                        {review.reviewer?.firstName} {review.reviewer?.lastName}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                  <StarRating value={review.rating} readOnly />
+                </div>
 
-                  {/* Title */}
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                    {review.title}
-                  </Typography>
+                <h4 className="font-semibold text-foreground mb-2">{review.title}</h4>
+                <p className="text-sm text-muted-foreground mb-4">{review.comment}</p>
 
-                  {/* Comment */}
-                  <Typography variant="body2" color="textSecondary">
-                    {review.comment}
-                  </Typography>
-
-                  {/* Pros and Cons */}
+                <div className="space-y-3">
                   {review.pros && review.pros.length > 0 && (
-                    <Box>
-                      <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                        Pros:
-                      </Typography>
-                      <Stack direction="row" spacing={1} sx={{ mt: 0.5, flexWrap: 'wrap' }}>
+                    <div>
+                      <div className="text-xs font-semibold text-emerald-500 mb-1.5 uppercase tracking-wider">Pros</div>
+                      <div className="flex flex-wrap gap-1.5">
                         {review.pros.map((pro, idx) => (
-                          <Chip
-                            key={idx}
-                            label={pro}
-                            size="small"
-                            color="success"
-                            variant="outlined"
-                          />
+                          <span key={idx} className="px-2 py-0.5 text-xs rounded border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
+                            {pro}
+                          </span>
                         ))}
-                      </Stack>
-                    </Box>
+                      </div>
+                    </div>
                   )}
 
                   {review.cons && review.cons.length > 0 && (
-                    <Box>
-                      <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                        Cons:
-                      </Typography>
-                      <Stack direction="row" spacing={1} sx={{ mt: 0.5, flexWrap: 'wrap' }}>
+                    <div>
+                      <div className="text-xs font-semibold text-destructive mb-1.5 uppercase tracking-wider">Cons</div>
+                      <div className="flex flex-wrap gap-1.5">
                         {review.cons.map((con, idx) => (
-                          <Chip
-                            key={idx}
-                            label={con}
-                            size="small"
-                            color="error"
-                            variant="outlined"
-                          />
+                          <span key={idx} className="px-2 py-0.5 text-xs rounded border border-destructive/20 bg-destructive/10 text-destructive">
+                            {con}
+                          </span>
                         ))}
-                      </Stack>
-                    </Box>
+                      </div>
+                    </div>
                   )}
-                </Stack>
+                </div>
               </CardContent>
             </Card>
           ))
         ) : (
-          <Typography variant="body2" color="textSecondary">
-            No reviews yet. Be the first to review!
-          </Typography>
+          <div className="text-center py-8 bg-card rounded-xl border border-border border-dashed">
+            <p className="text-muted-foreground">No reviews yet. Be the first to review!</p>
+          </div>
         )}
-      </Stack>
+      </div>
 
       {/* Add Review Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>Add Your Review</DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
-          <Stack spacing={2}>
-            {/* Rating */}
-            <Box>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                Rating *
-              </Typography>
-              <Rating
-                value={newReview.rating}
-                onChange={(event, value) =>
-                  setNewReview({ ...newReview, rating: value })
-                }
-                size="large"
-              />
-            </Box>
+      {openDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
+            
+            {/* Header */}
+            <div className="flex justify-between items-center p-6 border-b border-border bg-card">
+              <h2 className="text-xl font-bold text-foreground">Add Your Review</h2>
+              <button 
+                onClick={handleCloseDialog}
+                className="text-muted-foreground hover:text-foreground hover:bg-accent p-2 rounded-full transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
 
-            {/* Title */}
-            <TextField
-              label="Review Title *"
-              placeholder="e.g., Great Experience"
-              value={newReview.title}
-              onChange={(e) =>
-                setNewReview({ ...newReview, title: e.target.value })
-              }
-              fullWidth
-              size="small"
-            />
+            {/* Content */}
+            <div className="p-6 overflow-y-auto max-h-[70vh] space-y-4">
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Rating *</label>
+                <StarRating 
+                  value={newReview.rating} 
+                  onChange={(val) => setNewReview({ ...newReview, rating: val })} 
+                />
+              </div>
 
-            {/* Comment */}
-            <TextField
-              label="Your Comment *"
-              placeholder="Share your experience..."
-              value={newReview.comment}
-              onChange={(e) =>
-                setNewReview({ ...newReview, comment: e.target.value })
-              }
-              fullWidth
-              multiline
-              rows={4}
-              size="small"
-            />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Review Title *</label>
+                <Input
+                  placeholder="e.g., Great Experience"
+                  value={newReview.title}
+                  onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
+                  className="bg-muted border-border"
+                />
+              </div>
 
-            {/* Pros */}
-            <TextField
-              label="Pros (comma-separated)"
-              placeholder="e.g., Great team, Good pay, Remote work"
-              value={newReview.pros}
-              onChange={(e) =>
-                setNewReview({ ...newReview, pros: e.target.value })
-              }
-              fullWidth
-              size="small"
-            />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Your Comment *</label>
+                <textarea
+                  placeholder="Share your experience..."
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                  rows={4}
+                  className="w-full rounded-md border border-border bg-muted px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 resize-y"
+                />
+              </div>
 
-            {/* Cons */}
-            <TextField
-              label="Cons (comma-separated)"
-              placeholder="e.g., Long hours, Poor management"
-              value={newReview.cons}
-              onChange={(e) =>
-                setNewReview({ ...newReview, cons: e.target.value })
-              }
-              fullWidth
-              size="small"
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button
-            onClick={handleSubmitReview}
-            variant="contained"
-            color="primary"
-          >
-            Submit Review
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Pros (comma-separated)</label>
+                <Input
+                  placeholder="e.g., Great team, Good pay, Remote work"
+                  value={newReview.pros}
+                  onChange={(e) => setNewReview({ ...newReview, pros: e.target.value })}
+                  className="bg-muted border-border"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Cons (comma-separated)</label>
+                <Input
+                  placeholder="e.g., Long hours, Poor management"
+                  value={newReview.cons}
+                  onChange={(e) => setNewReview({ ...newReview, cons: e.target.value })}
+                  className="bg-muted border-border"
+                />
+              </div>
+
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-border bg-card flex justify-end gap-3">
+              <Button variant="outline" onClick={handleCloseDialog} className="border-border hover:bg-accent">
+                Cancel
+              </Button>
+              <Button onClick={handleSubmitReview}>
+                Submit Review
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

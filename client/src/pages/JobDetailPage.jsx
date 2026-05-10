@@ -1,29 +1,26 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Container,
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Stack,
-  Chip,
-  Grid,
-  Button,
-  CircularProgress,
-  Alert,
-  Divider,
-  Avatar,
-} from '@mui/material';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import WorkIcon from '@mui/icons-material/Work';
-import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { jobsAPI } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import ReviewComponent from '../components/ReviewComponent';
 import JobApplicationForm from '../components/JobApplicationForm';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Bookmark,
+  BookmarkCheck,
+  MapPin,
+  Briefcase,
+  DollarSign,
+  Loader2,
+  AlertCircle,
+  Building,
+  Mail,
+  Phone,
+  Trash2,
+  Edit,
+  ArrowLeft
+} from 'lucide-react';
 
 const JobDetailPage = () => {
   const { id } = useParams();
@@ -152,175 +149,170 @@ const JobDetailPage = () => {
 
   if (loading) {
     return (
-      <Container sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-        <CircularProgress />
-      </Container>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Container sx={{ py: 4 }}>
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-        <Button variant="contained" onClick={() => navigate('/jobs')}>
-          Back to Jobs
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-destructive/15 text-destructive text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-destructive/20">
+          <AlertCircle className="h-5 w-5 mt-0.5" />
+          <span>{error}</span>
+        </div>
+        <Button variant="outline" onClick={() => navigate('/jobs')}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Jobs
         </Button>
-      </Container>
+      </div>
     );
   }
 
   if (!job) {
     return (
-      <Container sx={{ py: 4 }}>
-        <Alert severity="warning">Job not found</Alert>
-        <Button variant="contained" onClick={() => navigate('/jobs')}>
-          Back to Jobs
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-warning/15 text-warning text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-warning/20">
+          <AlertCircle className="h-5 w-5 mt-0.5" />
+          <span>Job not found</span>
+        </div>
+        <Button variant="outline" onClick={() => navigate('/jobs')}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Jobs
         </Button>
-      </Container>
+      </div>
     );
   }
 
-  return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Job Header */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent sx={{ p: 4 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={8}>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
-                  {job.title}
-                </Typography>
-                <Typography variant="h6" color="textSecondary">
-                  {job.company}
-                </Typography>
-              </Box>
+  const isJobOwner = user && user._id === job.postedBy?._id;
 
-              <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: 'wrap' }}>
-                <Chip
-                  icon={<LocationOnIcon />}
-                  label={job.location}
-                  variant="outlined"
-                />
-                <Chip
-                  icon={<WorkIcon />}
-                  label={job.jobType}
-                  color="primary"
-                  variant="outlined"
-                />
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Back button */}
+      <div className="mb-6">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground p-0 h-auto">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+      </div>
+
+      {/* Job Header */}
+      <Card className="bg-card border-border mb-8">
+        <CardContent className="p-6 md:p-8">
+          <div className="flex flex-col md:flex-row gap-8 justify-between">
+            <div className="flex-1">
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2">
+                {job.title}
+              </h1>
+              <h2 className="text-xl text-muted-foreground mb-6 flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                {job.company}
+              </h2>
+
+              <div className="flex flex-wrap gap-3 mb-6">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm border border-border bg-muted text-foreground">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  {job.location}
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm border border-primary/20 bg-primary/10 text-primary font-medium">
+                  <Briefcase className="h-4 w-4" />
+                  {job.jobType}
+                </span>
                 {job.experienceLevel && (
-                  <Chip
-                    label={`${job.experienceLevel} Level`}
-                    variant="outlined"
-                  />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm border border-border bg-muted text-foreground">
+                    {job.experienceLevel} Level
+                  </span>
                 )}
-              </Stack>
+              </div>
 
               {job.salary && (
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="textSecondary">
-                    Salary
-                  </Typography>
-                  <Typography
-                    variant="h6"
-                    sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}
-                  >
-                    <CurrencyRupeeIcon /> {job.salary}
-                  </Typography>
-                </Box>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Salary</p>
+                  <p className="text-xl font-bold text-emerald-500 flex items-center gap-1">
+                    <DollarSign className="h-5 w-5" /> {job.salary}
+                  </p>
+                </div>
               )}
-            </Grid>
+            </div>
 
             {/* Action Buttons */}
-            <Grid item xs={12} md={4}>
-              <Stack spacing={2}>
-                {user && user._id === job.postedBy?._id ? (
-                  <>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      onClick={() => navigate(`/edit-job/${id}`)}
-                    >
-                      Edit Job
-                    </Button>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      color="error"
-                      onClick={() => {
-                        if (window.confirm('Are you sure?')) {
-                          jobsAPI
-                            .deleteJob(id)
-                            .then(() => {
-                              alert('Job deleted successfully');
-                              navigate('/jobs');
-                            })
-                            .catch(() => alert('Failed to delete job'));
-                        }
-                      }}
-                    >
-                      Delete Job
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      size="large"
-                      disabled={hasApplied}
-                      onClick={handleApply}
-                      sx={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      }}
-                    >
-                      {hasApplied ? `Applied (${applicationStatus})` : 'Apply Now'}
-                    </Button>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      startIcon={isSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                      onClick={handleSaveJob}
-                    >
-                      {isSaved ? 'Saved' : 'Save Job'}
-                    </Button>
-                  </>
-                )}
-              </Stack>
-            </Grid>
-          </Grid>
+            <div className="flex flex-col gap-3 w-full md:w-64 shrink-0">
+              {isJobOwner ? (
+                <>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start border-border hover:bg-accent"
+                    onClick={() => navigate(`/edit-job/${id}`)}
+                  >
+                    <Edit className="mr-2 h-4 w-4" /> Edit Job
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      if (window.confirm('Are you sure you want to delete this job? This action cannot be undone.')) {
+                        jobsAPI
+                          .deleteJob(id)
+                          .then(() => {
+                            alert('Job deleted successfully');
+                            navigate('/jobs');
+                          })
+                          .catch(() => alert('Failed to delete job'));
+                      }
+                    }}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" /> Delete Job
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    size="lg"
+                    className="w-full font-bold text-base h-12"
+                    disabled={hasApplied}
+                    onClick={handleApply}
+                  >
+                    {hasApplied ? `Applied (${applicationStatus})` : 'Apply Now'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className={`w-full font-medium h-12 border-border ${isSaved ? 'text-primary border-primary/30 bg-primary/5 hover:bg-primary/10' : 'hover:bg-accent'}`}
+                    onClick={handleSaveJob}
+                  >
+                    {isSaved ? (
+                      <><BookmarkCheck className="mr-2 h-5 w-5" /> Saved</>
+                    ) : (
+                      <><Bookmark className="mr-2 h-5 w-5" /> Save Job</>
+                    )}
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Job Details */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
           {/* Description */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
-                Job Description
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
+          <Card className="bg-card border-border">
+            <CardContent className="p-6 md:p-8">
+              <h3 className="text-xl font-bold text-foreground mb-4">Job Description</h3>
+              <div className="text-muted-foreground whitespace-pre-wrap leading-relaxed mb-8">
                 {job.description}
-              </Typography>
+              </div>
 
-              <Divider sx={{ my: 3 }} />
+              <div className="h-px w-full bg-border/40 my-8"></div>
 
-              <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
-                Requirements
-              </Typography>
-              <Typography variant="body1" sx={{ lineHeight: 1.8 }}>
+              <h3 className="text-xl font-bold text-foreground mb-4">Requirements</h3>
+              <div className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
                 {job.requirements}
-              </Typography>
+              </div>
             </CardContent>
           </Card>
 
           {/* Reviews */}
-          <Card>
-            <CardContent>
+          <Card className="bg-card border-border">
+            <CardContent className="p-6 md:p-8">
               <ReviewComponent
                 reviews={reviews}
                 onAddReview={handleAddReview}
@@ -328,74 +320,71 @@ const JobDetailPage = () => {
               />
             </CardContent>
           </Card>
-        </Grid>
+        </div>
 
         {/* Sidebar - Company Info */}
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                Company Info
-              </Typography>
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="bg-card border-border">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-bold text-foreground mb-6">Company Info</h3>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                <Avatar
-                  sx={{ width: 50, height: 50, bgcolor: '#667eea' }}
-                  alt={job.company}
-                >
-                  {job.company?.[0] || 'C'}
-                </Avatar>
-                <Box>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                    {job.company}
-                  </Typography>
-                </Box>
-              </Box>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-12 w-12 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xl font-bold">
+                  {job.company?.[0]?.toUpperCase() || 'C'}
+                </div>
+                <div>
+                  <p className="font-bold text-foreground text-lg">{job.company}</p>
+                </div>
+              </div>
 
-              <Divider sx={{ my: 2 }} />
+              <div className="h-px w-full bg-border/40 my-6"></div>
 
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="textSecondary">
-                  Posted by
-                </Typography>
-                <Typography variant="body1">
-                  {job.postedBy?.firstName} {job.postedBy?.lastName}
-                </Typography>
-              </Box>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Posted by</p>
+                  <p className="text-foreground font-medium flex items-center gap-2">
+                    <div className="h-6 w-6 rounded-full bg-accent flex items-center justify-center text-xs text-muted-foreground">
+                      {job.postedBy?.firstName?.[0] || 'U'}
+                    </div>
+                    {job.postedBy?.firstName} {job.postedBy?.lastName}
+                  </p>
+                </div>
 
-              {job.postedBy?.email && (
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="textSecondary">
-                    Email
-                  </Typography>
-                  <Typography variant="body1">{job.postedBy.email}</Typography>
-                </Box>
-              )}
+                {job.postedBy?.email && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Email</p>
+                    <a href={`mailto:${job.postedBy.email}`} className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      {job.postedBy.email}
+                    </a>
+                  </div>
+                )}
 
-              {job.postedBy?.phone && (
-                <Box>
-                  <Typography variant="body2" color="textSecondary">
-                    Phone
-                  </Typography>
-                  <Typography variant="body1">{job.postedBy.phone}</Typography>
-                </Box>
-              )}
+                {job.postedBy?.phone && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Phone</p>
+                    <a href={`tel:${job.postedBy.phone}`} className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      {job.postedBy.phone}
+                    </a>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
           {/* View Company Profile */}
           {job.postedBy?.company && (
             <Button
-              fullWidth
-              variant="outlined"
-              sx={{ mt: 2 }}
+              variant="outline"
+              className="w-full border-border hover:bg-muted"
               onClick={() => navigate(`/companies/${job.postedBy._id}`)}
             >
               View Company Profile
             </Button>
           )}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
       {/* Application Form Dialog */}
       <JobApplicationForm
@@ -405,7 +394,7 @@ const JobDetailPage = () => {
         onSubmit={handleApplicationSubmit}
         loading={submittingApplication}
       />
-    </Container>
+    </div>
   );
 };
 

@@ -1,39 +1,21 @@
 import React, { useEffect, useState, useContext } from 'react';
-import {
-  Container,
-  Box,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Button,
-  CircularProgress,
-  Alert,
-  Stack,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Tab,
-  Tabs,
-} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import DescriptionIcon from '@mui/icons-material/Description';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import PersonIcon from '@mui/icons-material/Person';
-import PostAddIcon from '@mui/icons-material/PostAdd';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import PendingIcon from '@mui/icons-material/Pending';
 import { usersAPI, jobsAPI } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { 
+  FileText, 
+  Bookmark, 
+  User, 
+  PlusSquare, 
+  Trash2, 
+  CheckCircle2, 
+  Clock, 
+  Loader2, 
+  AlertCircle,
+  X
+} from 'lucide-react';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -65,12 +47,10 @@ const DashboardPage = () => {
       if (userRes.data.userType === 'job_seeker') {
         try {
           const applicationsRes = await jobsAPI.getUserApplications();
-          // Backend returns array of applications with complete job and application data
           const appList = Array.isArray(applicationsRes.data) ? applicationsRes.data : [];
           
-          // Transform to match dashboard structure - wrap job details in jobId object
           const transformedApps = appList.map(app => ({
-            _id: `${app.jobId}-${app.appliedAt}`, // Create unique ID from jobId and appliedAt
+            _id: `${app.jobId}-${app.appliedAt}`,
             jobId: {
               _id: app.jobId,
               title: app.title,
@@ -98,7 +78,6 @@ const DashboardPage = () => {
           
           setApplications(transformedApps);
           
-          // Track which jobs have been applied to
           const appliedIds = new Set(appList.map(app => app.jobId));
           setAppliedJobIds(appliedIds);
         } catch (err) {
@@ -156,544 +135,340 @@ const DashboardPage = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
   const stats = userData?.userType === 'job_seeker' ? [
     {
-      icon: <DescriptionIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: '#667eea' }} />,
+      icon: <FileText className="h-8 w-8 text-blue-500" />,
       label: 'My Applications',
       value: applications.length,
-      color: '#667eea',
     },
     {
-      icon: <BookmarkIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: '#764ba2' }} />,
+      icon: <Bookmark className="h-8 w-8 text-purple-500" />,
       label: 'Saved Jobs',
       value: savedJobs.length,
-      color: '#764ba2',
     },
     {
-      icon: <PersonIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: '#f093fb' }} />,
-      label: 'Profile',
-      value: '✓',
-      color: '#f093fb',
+      icon: <User className="h-8 w-8 text-pink-500" />,
+      label: 'Profile Status',
+      value: '100%',
     },
   ] : [
     {
-      icon: <PostAddIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: '#667eea' }} />,
+      icon: <PlusSquare className="h-8 w-8 text-blue-500" />,
       label: 'Job Posts',
       value: userJobs.length,
-      color: '#667eea',
     },
     {
-      icon: <PersonIcon sx={{ fontSize: { xs: 32, sm: 40 }, color: '#764ba2' }} />,
-      label: 'Profile',
-      value: '✓',
-      color: '#764ba2',
+      icon: <User className="h-8 w-8 text-purple-500" />,
+      label: 'Profile Status',
+      value: '100%',
     },
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
-      <Typography variant="h3" sx={{ mb: 4, fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' } }}>
-        Dashboard
-      </Typography>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2">
+          Dashboard
+        </h1>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+      {error && (
+        <div className="bg-destructive/15 text-destructive text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-destructive/20">
+          <AlertCircle className="h-5 w-5 mt-0.5" />
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Stats Cards */}
-      <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} sx={{ mb: 6 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
         {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={userData?.userType === 'job_seeker' ? 4 : 6} key={index}>
-            <Card
-              sx={{
-                textAlign: 'center',
-                py: { xs: 2, sm: 2.5, md: 3 },
-                px: { xs: 2, sm: 2 },
-                background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-                border: '1px solid #e0e0e0',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: 3,
-                },
-              }}
-            >
-              <CardContent sx={{ p: { xs: 1, sm: 1.5 } }}>
-                <Box sx={{ mb: 1.5 }}>{stat.icon}</Box>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0.5, fontSize: { xs: '1.5rem', sm: '1.75rem' } }}>
-                  {stat.value}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {stat.label}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card key={index} className="bg-card border-border hover:bg-muted transition-all hover:-translate-y-1">
+            <CardContent className="p-6 text-center flex flex-col items-center">
+              <div className="mb-4 p-3 rounded-full bg-muted border border-border">
+                {stat.icon}
+              </div>
+              <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+              <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{stat.label}</div>
+            </CardContent>
+          </Card>
         ))}
-      </Grid>
+      </div>
 
       {/* User Profile Section */}
       {userData && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-              My Profile
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="body2" color="textSecondary">
-                  Name
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                  {userData.firstName} {userData.lastName}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="body2" color="textSecondary">
-                  Email
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: 500, wordBreak: 'break-all' }}>
-                  {userData.email}
-                </Typography>
-              </Grid>
+        <Card className="mb-10 bg-card border-border">
+          <CardContent className="p-6 md:p-8">
+            <h2 className="text-xl font-bold text-foreground mb-6">My Profile</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+              <div>
+                <div className="text-sm font-medium text-muted-foreground mb-1">Name</div>
+                <div className="font-semibold text-foreground">{userData.firstName} {userData.lastName}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-muted-foreground mb-1">Email</div>
+                <div className="font-semibold text-foreground break-all">{userData.email}</div>
+              </div>
               {userData.userType === 'employer' && userData.company && (
-                <Grid item xs={12} md={6}>
-                  <Typography variant="body2" color="textSecondary">
-                    Company
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {userData.company}
-                  </Typography>
-                </Grid>
+                <div>
+                  <div className="text-sm font-medium text-muted-foreground mb-1">Company</div>
+                  <div className="font-semibold text-foreground">{userData.company}</div>
+                </div>
               )}
               {userData.phone && (
-                <Grid item xs={12} md={6}>
-                  <Typography variant="body2" color="textSecondary">
-                    Phone
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {userData.phone}
-                  </Typography>
-                </Grid>
+                <div>
+                  <div className="text-sm font-medium text-muted-foreground mb-1">Phone</div>
+                  <div className="font-semibold text-foreground">{userData.phone}</div>
+                </div>
               )}
               {userData.bio && (
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="textSecondary">
-                    Bio
-                  </Typography>
-                  <Typography variant="body1">{userData.bio}</Typography>
-                </Grid>
+                <div className="md:col-span-2">
+                  <div className="text-sm font-medium text-muted-foreground mb-1">Bio</div>
+                  <div className="text-foreground">{userData.bio}</div>
+                </div>
               )}
-              <Grid item xs={12}>
-                <Typography variant="body2" color="textSecondary">
-                  User Type
-                </Typography>
-                <Chip
-                  label={userData.userType === 'job_seeker' ? 'Job Seeker' : 'Employer'}
-                  color={userData.userType === 'job_seeker' ? 'primary' : 'secondary'}
-                  size="small"
-                />
-              </Grid>
-            </Grid>
+              <div className="md:col-span-2">
+                <div className="text-sm font-medium text-muted-foreground mb-2">User Type</div>
+                <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                  userData.userType === 'job_seeker' 
+                    ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' 
+                    : 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
+                }`}>
+                  {userData.userType === 'job_seeker' ? 'Job Seeker' : 'Employer'}
+                </span>
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}
 
       {/* Posted Jobs Section */}
       {userData?.userType === 'employer' && (
-        <>
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: { xs: 'flex-start', sm: 'center' },
-            flexDirection: { xs: 'column', sm: 'row' },
-            gap: 2,
-            mb: 3
-          }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-              My Posted Jobs ({userJobs.length})
-            </Typography>
-            <Button
-              variant="contained"
-              sx={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                width: { xs: '100%', sm: 'auto' }
-              }}
-              onClick={() => navigate('/post-job')}
-            >
+        <div className="mb-10">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-foreground">
+              My Posted Jobs <span className="text-muted-foreground text-lg font-normal">({userJobs.length})</span>
+            </h2>
+            <Button onClick={() => navigate('/post-job')} className="w-full sm:w-auto">
               Post New Job
             </Button>
-          </Box>
+          </div>
 
           {userJobs.length > 0 ? (
-            <Grid container spacing={2} sx={{ mb: 6 }}>
+            <div className="grid grid-cols-1 gap-4">
               {userJobs.map((job) => (
-                <Grid item xs={12} key={job._id}>
-                  <Card
-                    sx={{
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        boxShadow: 3,
-                      }
-                    }}
-                  >
-                    <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                      <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: { xs: 'flex-start', sm: 'start' },
-                        flexDirection: { xs: 'column', sm: 'row' },
-                        gap: 2
-                      }}>
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, fontSize: { xs: '1rem', sm: '1.1rem' } }}>
-                            {job.title}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                            {job.location} • {job.jobType}
-                          </Typography>
-                          {job.salary && (
-                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-                              ₹{job.salaryMin || job.salary} - ₹{job.salaryMax || job.salary}
-                            </Typography>
-                          )}
-                          <Typography variant="caption" color="textSecondary">
-                            Applications: {job.applications?.length || 0}
-                          </Typography>
-                        </Box>
-                        <Stack direction={{ xs: 'row', sm: 'column' }} spacing={1} sx={{ width: { xs: '100%', sm: 'auto' } }}>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={() => navigate(`/jobs/${job._id}`)}
-                            sx={{ flex: { xs: 1, sm: 'auto' } }}
-                          >
-                            View
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={() => navigate(`/edit-job/${job._id}`)}
-                            sx={{ flex: { xs: 1, sm: 'auto' } }}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            color="error"
-                            onClick={() => setDeleteDialog({ open: true, type: 'job', id: job._id })}
-                            sx={{ flex: { xs: 1, sm: 'auto' } }}
-                          >
-                            Delete
-                          </Button>
-                        </Stack>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                <Card key={job._id} className="bg-card border-border hover:bg-muted transition-colors">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col md:flex-row justify-between gap-6">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-foreground mb-2">{job.title}</h3>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {job.location} • {job.jobType}
+                        </p>
+                        {job.salary && (
+                          <p className="text-sm font-medium text-foreground mb-2">
+                            ${job.salaryMin?.toLocaleString() || job.salary?.toLocaleString()} - ${job.salaryMax?.toLocaleString() || job.salary?.toLocaleString()}
+                          </p>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          Applications: <span className="font-semibold text-foreground">{job.applications?.length || 0}</span>
+                        </p>
+                      </div>
+                      <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                        <Button variant="outline" size="sm" onClick={() => navigate(`/jobs/${job._id}`)} className="flex-1 border-border">
+                          View
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => navigate(`/edit-job/${job._id}`)} className="flex-1 border-border">
+                          Edit
+                        </Button>
+                        <Button variant="outline" size="sm" color="destructive" onClick={() => setDeleteDialog({ open: true, type: 'job', id: job._id })} className="flex-1 text-destructive border-destructive/20 hover:bg-destructive/10">
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
-            </Grid>
+            </div>
           ) : (
-            <Card sx={{ mb: 6 }}>
-              <CardContent sx={{ p: { xs: 2, sm: 3 }, textAlign: 'center', py: { xs: 3, sm: 4 } }}>
-                <Typography variant="body1" color="textSecondary">
-                  No jobs posted yet. Start by creating a new job posting!
-                </Typography>
-              </CardContent>
-            </Card>
+            <div className="text-center py-12 bg-card rounded-xl border border-border border-dashed">
+              <p className="text-muted-foreground mb-4">No jobs posted yet. Start by creating a new job posting!</p>
+              <Button onClick={() => navigate('/post-job')}>Post New Job</Button>
+            </div>
           )}
-        </>
+        </div>
       )}
 
       {/* Job Seeker Sections with Tabs */}
       {userData?.userType === 'job_seeker' && (
-        <>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 4 }}>
-            <Tabs 
-              value={jobSeekerTab} 
-              onChange={(e, newValue) => setJobSeekerTab(newValue)}
-              sx={{ 
-                '& .MuiTab-root': { textTransform: 'none', fontSize: { xs: '0.9rem', sm: '1rem' } }
-              }}
+        <div className="mb-10">
+          <div className="flex overflow-x-auto border-b border-border mb-8 pb-px no-scrollbar">
+            <button
+              onClick={() => setJobSeekerTab(0)}
+              className={`whitespace-nowrap px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                jobSeekerTab === 0
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
+              }`}
             >
-              <Tab label={`My Applications (${applications.length})`} />
-              <Tab label={`Saved Jobs (${savedJobs.length})`} />
-            </Tabs>
-          </Box>
+              My Applications <span className="ml-1.5 py-0.5 px-2 bg-muted rounded-full text-xs">{applications.length}</span>
+            </button>
+            <button
+              onClick={() => setJobSeekerTab(1)}
+              className={`whitespace-nowrap px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                jobSeekerTab === 1
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
+              }`}
+            >
+              Saved Jobs <span className="ml-1.5 py-0.5 px-2 bg-muted rounded-full text-xs">{savedJobs.length}</span>
+            </button>
+          </div>
 
           {/* Applications Tab */}
           {jobSeekerTab === 0 && (
-            <>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                My Applications
-              </Typography>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-6">My Applications</h2>
               {applications.length > 0 ? (
-                <>
-                  {/* Desktop view - Table */}
-                  <Box sx={{ display: { xs: 'none', md: 'block' }, mb: 6 }}>
-                    <TableContainer component={Card}>
-                      <Table>
-                        <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-                          <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Job Title</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Company</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Location</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Applied On</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {applications.map((app) => (
-                            <TableRow key={app._id} hover>
-                              <TableCell sx={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {app.jobId?.title || 'Job'}
-                              </TableCell>
-                              <TableCell>{app.jobId?.company || '-'}</TableCell>
-                              <TableCell>{app.jobId?.location || '-'}</TableCell>
-                              <TableCell>
-                                <Chip
-                                  icon={app.status === 'applied' ? <CheckCircleIcon /> : <PendingIcon />}
-                                  label={app.status === 'applied' ? 'Applied Job' : app.status || 'pending'}
-                                  size="small"
-                                  color={
-                                    app.status === 'accepted' ? 'success' :
-                                    app.status === 'applied' ? 'info' :
-                                    app.status === 'rejected' ? 'error' :
-                                    'warning'
-                                  }
-                                  variant={app.status === 'applied' ? 'filled' : 'outlined'}
-                                />
-                              </TableCell>
-                              <TableCell>
-                                {new Date(app.appliedAt || app.createdAt).toLocaleDateString()}
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  size="small"
-                                  onClick={() => navigate(`/jobs/${app.jobId?._id}`)}
-                                >
-                                  View
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </Box>
-
-                  {/* Mobile view - Cards */}
-                  <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 6 }}>
-                    <Grid container spacing={2}>
-                      {applications.map((app) => (
-                        <Grid item xs={12} key={app._id}>
-                          <Card
-                            sx={{
-                              background: app.status === 'applied' ? 'linear-gradient(135deg, rgba(33, 150, 243, 0.05) 0%, rgba(33, 150, 243, 0.02) 100%)' : 'transparent',
-                              border: app.status === 'applied' ? '2px solid #2196F3' : '1px solid #e0e0e0',
-                            }}
-                          >
-                            <CardContent sx={{ p: 2 }}>
-                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0, fontSize: '0.95rem', flex: 1 }}>
-                                  {app.jobId?.title || 'Job'}
-                                </Typography>
-                                <Chip
-                                  icon={app.status === 'applied' ? <CheckCircleIcon /> : <PendingIcon />}
-                                  label={app.status === 'applied' ? 'Applied' : app.status || 'pending'}
-                                  size="small"
-                                  color={
-                                    app.status === 'accepted' ? 'success' :
-                                    app.status === 'applied' ? 'info' :
-                                    app.status === 'rejected' ? 'error' :
-                                    'warning'
-                                  }
-                                  variant={app.status === 'applied' ? 'filled' : 'outlined'}
-                                  sx={{ ml: 1 }}
-                                />
-                              </Box>
-                              <Typography variant="body2" color="textSecondary" sx={{ mb: 0.5 }}>
-                                {app.jobId?.company}
-                              </Typography>
-                              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                                {app.jobId?.location}
-                              </Typography>
-                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Typography variant="caption" color="textSecondary">
-                                  {new Date(app.appliedAt || app.createdAt).toLocaleDateString()}
-                                </Typography>
-                              </Box>
-                              <Button
-                                size="small"
-                                variant="contained"
-                                onClick={() => navigate(`/jobs/${app.jobId?._id}`)}
-                                sx={{ mt: 1.5, width: '100%' }}
-                              >
-                                View Job
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </Box>
-                </>
+                <div className="grid grid-cols-1 gap-4">
+                  {applications.map((app) => (
+                    <Card key={app._id} className="bg-card border-border hover:bg-muted transition-colors">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-2">
+                              <h3 className="text-lg font-bold text-foreground">{app.jobId?.title || 'Job'}</h3>
+                              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${
+                                app.status === 'accepted' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
+                                app.status === 'applied' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+                                app.status === 'rejected' ? 'bg-destructive/10 text-destructive border border-destructive/20' :
+                                'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                              }`}>
+                                {app.status === 'applied' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
+                                {app.status === 'applied' ? 'Applied' : app.status || 'Pending'}
+                              </span>
+                            </div>
+                            <p className="text-sm font-medium text-muted-foreground mb-1">
+                              {app.jobId?.company}
+                            </p>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              {app.jobId?.location}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Applied on: {new Date(app.appliedAt || app.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="shrink-0 w-full md:w-auto">
+                            <Button variant="outline" className="w-full border-border" onClick={() => navigate(`/jobs/${app.jobId?._id}`)}>
+                              View Job
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               ) : (
-                <Card sx={{ mb: 6 }}>
-                  <CardContent sx={{ p: { xs: 2, sm: 3 }, textAlign: 'center', py: { xs: 3, sm: 4 } }}>
-                    <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
-                      You haven't applied for any jobs yet.
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-                      onClick={() => navigate('/jobs')}
-                    >
-                      Browse Jobs
-                    </Button>
-                  </CardContent>
-                </Card>
+                <div className="text-center py-12 bg-card rounded-xl border border-border border-dashed">
+                  <p className="text-muted-foreground mb-4">You haven't applied for any jobs yet.</p>
+                  <Button onClick={() => navigate('/jobs')}>Browse Jobs</Button>
+                </div>
               )}
-            </>
+            </div>
           )}
 
           {/* Saved Jobs Tab */}
           {jobSeekerTab === 1 && (
-            <>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                Saved Jobs
-              </Typography>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Saved Jobs</h2>
               {savedJobs.length > 0 ? (
-                <Grid container spacing={2} sx={{ mb: 6 }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {savedJobs.map((job) => {
                     const isApplied = appliedJobIds.has(job._id);
                     return (
-                      <Grid item xs={12} sm={6} md={4} key={job._id}>
-                        <Card
-                          sx={{
-                            transition: 'all 0.3s ease',
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            background: isApplied ? 'linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%)' : 'transparent',
-                            border: isApplied ? '2px solid #4CAF50' : '1px solid #e0e0e0',
-                            position: 'relative',
-                            '&:hover': {
-                              boxShadow: 3,
-                              transform: 'translateY(-5px)'
-                            }
-                          }}
-                        >
-                          {isApplied && (
-                            <Box sx={{
-                              position: 'absolute',
-                              top: -12,
-                              right: 16,
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 0.5
-                            }}>
-                              <Chip
-                                icon={<CheckCircleIcon />}
-                                label="Applied"
-                                size="small"
-                                color="success"
-                                sx={{ 
-                                  background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
-                                  color: 'white',
-                                  fontWeight: 'bold'
-                                }}
-                              />
-                            </Box>
-                          )}
-                          <CardContent sx={{ p: { xs: 2, sm: 2.5 }, flex: 1, pt: isApplied ? 3 : 2 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, fontSize: { xs: '0.95rem', sm: '1rem' } }}>
-                              {job.title}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" sx={{ mb: 0.5 }}>
-                              {job.company}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                              {job.location} • {job.jobType}
-                            </Typography>
-                            {job.salary && (
-                              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, fontSize: { xs: '0.85rem', sm: '0.9rem' } }}>
-                                ₹{job.salaryMin || job.salary} - ₹{job.salaryMax || job.salary}
-                              </Typography>
+                      <Card key={job._id} className={`flex flex-col h-full bg-card transition-colors ${isApplied ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-border hover:bg-muted'}`}>
+                        <CardContent className="p-6 flex-1 flex flex-col">
+                          <div className="flex justify-between items-start mb-4">
+                            <h3 className="text-lg font-bold text-foreground leading-tight line-clamp-2">{job.title}</h3>
+                            {isApplied && (
+                              <span className="shrink-0 bg-emerald-500 text-black px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" /> Applied
+                              </span>
                             )}
-                            <Typography variant="caption" color="textSecondary">
+                          </div>
+                          <div className="mb-4 flex-1">
+                            <p className="text-sm font-medium text-muted-foreground mb-1">{job.company}</p>
+                            <p className="text-sm text-muted-foreground mb-2">{job.location} • {job.jobType}</p>
+                            {job.salary && (
+                              <p className="text-sm font-medium text-foreground mb-2">
+                                ${job.salaryMin?.toLocaleString() || job.salary?.toLocaleString()} - ${job.salaryMax?.toLocaleString() || job.salary?.toLocaleString()}
+                              </p>
+                            )}
+                            <span className="inline-block px-2 py-1 bg-muted border border-border rounded text-xs text-muted-foreground">
                               {job.experienceLevel}
-                            </Typography>
-                          </CardContent>
-                          <Stack spacing={1} sx={{ p: { xs: 1, sm: 1.5 } }}>
-                            <Button
-                              variant="contained"
-                              size="small"
-                              fullWidth
-                              sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-                              onClick={() => navigate(`/jobs/${job._id}`)}
-                            >
+                            </span>
+                          </div>
+                          <div className="space-y-2 mt-auto">
+                            <Button className="w-full" onClick={() => navigate(`/jobs/${job._id}`)}>
                               {isApplied ? 'View Application' : 'View & Apply'}
                             </Button>
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              fullWidth
-                              color="error"
-                              startIcon={<DeleteIcon />}
-                              onClick={() => handleRemoveSavedJob(job._id)}
-                            >
-                              Remove
+                            <Button variant="outline" className="w-full border-border text-destructive hover:bg-destructive/10" onClick={() => handleRemoveSavedJob(job._id)}>
+                              <Trash2 className="w-4 h-4 mr-2" /> Remove
                             </Button>
-                          </Stack>
-                        </Card>
-                      </Grid>
+                          </div>
+                        </CardContent>
+                      </Card>
                     );
                   })}
-                </Grid>
+                </div>
               ) : (
-                <Card sx={{ mb: 6 }}>
-                  <CardContent sx={{ p: { xs: 2, sm: 3 }, textAlign: 'center', py: { xs: 3, sm: 4 } }}>
-                    <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
-                      You haven't saved any jobs yet.
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-                      onClick={() => navigate('/jobs')}
-                    >
-                      Browse Jobs
-                    </Button>
-                  </CardContent>
-                </Card>
+                <div className="text-center py-12 bg-card rounded-xl border border-border border-dashed">
+                  <p className="text-muted-foreground mb-4">You haven't saved any jobs yet.</p>
+                  <Button onClick={() => navigate('/jobs')}>Browse Jobs</Button>
+                </div>
               )}
-            </>
+            </div>
           )}
-        </>
+        </div>
       )}
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, type: null, id: null })}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to delete this job? This action cannot be undone.</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialog({ open: false, type: null, id: null })}>Cancel</Button>
-          <Button onClick={handleDeleteJob} color="error" variant="contained">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {deleteDialog.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-6 border-b border-border bg-card">
+              <h2 className="text-xl font-bold text-foreground">Confirm Deletion</h2>
+              <button 
+                onClick={() => setDeleteDialog({ open: false, type: null, id: null })}
+                className="text-muted-foreground hover:text-foreground hover:bg-accent p-2 rounded-full transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-muted-foreground">
+                Are you sure you want to delete this job? This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="p-6 border-t border-border bg-card flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setDeleteDialog({ open: false, type: null, id: null })} className="border-border hover:bg-accent">
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteJob}>
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

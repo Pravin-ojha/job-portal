@@ -1,18 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  Container,
-  Box,
-  Typography,
-  Grid,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import JobFilters from '../components/JobFilters';
 import PaginationComponent from '../components/Pagination';
 import JobCard from '../components/JobCard';
+import { AlertCircle, Loader2, Search } from 'lucide-react';
 
 const JobsPage = () => {
   const navigate = useNavigate();
@@ -123,67 +116,80 @@ const JobsPage = () => {
 
   if (loading && jobs.length === 0) {
     return (
-      <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
-        Search Jobs
-      </Typography>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex items-center gap-3 mb-8">
+        <Search className="h-8 w-8 text-primary" />
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+          Search Jobs
+        </h1>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+      {error && (
+        <div className="bg-destructive/15 text-destructive text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-destructive/20">
+          <AlertCircle className="h-5 w-5 mt-0.5" />
+          <span>{error}</span>
+        </div>
+      )}
 
-      <Grid container spacing={3}>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Filters Sidebar */}
-        <Grid item xs={12} md={3}>
+        <div className="lg:col-span-1">
           <JobFilters onFilter={handleFilter} onClear={handleClearFilters} />
-        </Grid>
+        </div>
 
         {/* Jobs Listing */}
-        <Grid item xs={12} md={9}>
+        <div className="lg:col-span-3">
           {jobs.length > 0 ? (
             <>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="textSecondary">
+              <div className="mb-4">
+                <p className="text-sm font-medium text-muted-foreground">
                   Found {pagination.totalJobs} jobs
-                </Typography>
-              </Box>
+                </p>
+              </div>
               
-              {jobs.map((job) => (
-                <JobCard
-                  key={job._id}
-                  job={job}
-                  isSaved={savedJobs.includes(job._id)}
-                  onSave={handleSaveJob}
-                  onUnsave={handleUnsaveJob}
-                />
-              ))}
+              <div className="flex flex-col gap-4">
+                {jobs.map((job) => (
+                  <JobCard
+                    key={job._id}
+                    job={job}
+                    isSaved={savedJobs.includes(job._id)}
+                    onSave={handleSaveJob}
+                    onUnsave={handleUnsaveJob}
+                  />
+                ))}
+              </div>
 
               {/* Pagination */}
               {pagination.totalPages > 1 && (
-                <PaginationComponent
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  totalItems={pagination.totalJobs}
-                  itemsPerPage={pagination.jobsPerPage}
-                  onPageChange={setCurrentPage}
-                />
+                <div className="mt-8">
+                  <PaginationComponent
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    totalItems={pagination.totalJobs}
+                    itemsPerPage={pagination.jobsPerPage}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
               )}
             </>
           ) : (
-            <Alert severity="info">
-              No jobs found matching your criteria. Try adjusting your filters.
-            </Alert>
+            <div className="bg-card rounded-xl border border-border border-dashed p-12 text-center">
+              <Search className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+              <p className="text-muted-foreground">
+                No jobs found matching your criteria. Try adjusting your filters.
+              </p>
+            </div>
           )}
-        </Grid>
-      </Grid>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Grid,
-  Alert,
-  Card,
-  CardContent,
-  CircularProgress,
-} from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { jobsAPI } from '../services/api';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { AlertCircle, CheckCircle2, Loader2, Edit } from 'lucide-react';
 
 const EditJobPage = () => {
   const navigate = useNavigate();
@@ -105,150 +96,182 @@ const EditJobPage = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="md">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h2" sx={{ mb: 4 }}>
-        Edit Job Posting
-      </Typography>
+    <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="flex items-center gap-3 mb-8">
+        <Edit className="h-8 w-8 text-primary" />
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+          Edit Job Posting
+        </h1>
+      </div>
 
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-      {success && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          Job updated successfully! Redirecting to dashboard... 🎉
-        </Alert>
+      {error && (
+        <div className="bg-destructive/15 text-destructive text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-destructive/20">
+          <AlertCircle className="h-5 w-5 mt-0.5" />
+          <span>{error}</span>
+        </div>
       )}
 
-      <Card>
-        <CardContent sx={{ p: 4 }}>
-          <Box component="form" onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Job Title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  variant="outlined"
-                  disabled={submitting}
-                />
-              </Grid>
+      {success && (
+        <div className="bg-emerald-500/15 text-emerald-500 text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-emerald-500/20">
+          <CheckCircle2 className="h-5 w-5 mt-0.5" />
+          <span>Job updated successfully! Redirecting to dashboard... 🎉</span>
+        </div>
+      )}
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Company Name"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  required
-                  variant="outlined"
-                  disabled={submitting}
-                />
-              </Grid>
+      <Card className="bg-card border-border">
+        <CardContent className="p-6 md:p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="title" className="text-sm font-medium text-foreground">
+                Job Title <span className="text-destructive">*</span>
+              </label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                required
+                disabled={submitting}
+                value={formData.title}
+                onChange={handleChange}
+                className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+              />
+            </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Location"
+            <div className="space-y-2">
+              <label htmlFor="company" className="text-sm font-medium text-foreground">
+                Company Name <span className="text-destructive">*</span>
+              </label>
+              <input
+                id="company"
+                name="company"
+                type="text"
+                required
+                disabled={submitting}
+                value={formData.company}
+                onChange={handleChange}
+                className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label htmlFor="location" className="text-sm font-medium text-foreground">
+                  Location <span className="text-destructive">*</span>
+                </label>
+                <input
+                  id="location"
                   name="location"
+                  type="text"
+                  required
+                  disabled={submitting}
                   value={formData.location}
                   onChange={handleChange}
-                  required
-                  variant="outlined"
-                  disabled={submitting}
+                  className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                 />
-              </Grid>
+              </div>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Job Type"
+              <div className="space-y-2">
+                <label htmlFor="jobType" className="text-sm font-medium text-foreground">
+                  Job Type <span className="text-destructive">*</span>
+                </label>
+                <input
+                  id="jobType"
                   name="jobType"
+                  type="text"
+                  required
+                  disabled={submitting}
                   value={formData.jobType}
                   onChange={handleChange}
-                  required
-                  variant="outlined"
+                  className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                   placeholder="e.g., Full-time, Part-time, Remote"
-                  disabled={submitting}
                 />
-              </Grid>
+              </div>
+            </div>
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Salary (Optional)"
-                  name="salary"
-                  value={formData.salary}
-                  onChange={handleChange}
-                  variant="outlined"
-                  placeholder="e.g., $50,000 - $70,000"
-                  disabled={submitting}
-                />
-              </Grid>
+            <div className="space-y-2">
+              <label htmlFor="salary" className="text-sm font-medium text-foreground">
+                Salary (Optional)
+              </label>
+              <input
+                id="salary"
+                name="salary"
+                type="text"
+                disabled={submitting}
+                value={formData.salary}
+                onChange={handleChange}
+                className="flex h-10 w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                placeholder="e.g., $50,000 - $70,000"
+              />
+            </div>
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Job Description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                  variant="outlined"
-                  multiline
-                  rows={6}
-                  disabled={submitting}
-                />
-              </Grid>
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-medium text-foreground">
+                Job Description <span className="text-destructive">*</span>
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                required
+                disabled={submitting}
+                value={formData.description}
+                onChange={handleChange}
+                rows={6}
+                className="flex w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors min-h-[150px]"
+              />
+            </div>
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Requirements"
-                  name="requirements"
-                  value={formData.requirements}
-                  onChange={handleChange}
-                  required
-                  variant="outlined"
-                  multiline
-                  rows={4}
-                  placeholder="e.g., 3+ years experience, Bachelor's degree, etc."
-                  disabled={submitting}
-                />
-              </Grid>
+            <div className="space-y-2">
+              <label htmlFor="requirements" className="text-sm font-medium text-foreground">
+                Requirements <span className="text-destructive">*</span>
+              </label>
+              <textarea
+                id="requirements"
+                name="requirements"
+                required
+                disabled={submitting}
+                value={formData.requirements}
+                onChange={handleChange}
+                rows={4}
+                className="flex w-full rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors min-h-[100px]"
+                placeholder="e.g., 3+ years experience, Bachelor's degree, etc."
+              />
+            </div>
 
-              <Grid item xs={12} sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate('/dashboard')}
-                  disabled={submitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={submitting}
-                >
-                  {submitting ? 'Updating...' : 'Update Job'}
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/dashboard')}
+                disabled={submitting}
+                className="border-border"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  'Update Job'
+                )}
+              </Button>
+            </div>
+          </form>
         </CardContent>
       </Card>
-    </Container>
+    </div>
   );
 };
 
