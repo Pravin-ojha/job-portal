@@ -2,15 +2,41 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 
-// Middleware
+// Security middleware
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+app.use(compression());
+
+// Rate limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // limit each IP to 200 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20, // stricter limit for auth endpoints
+  message: { error: 'Too many login attempts, please try again later.' },
+});
+
+app.use('/api', apiLimiter);
+
+// Body parsing middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
@@ -344,18 +370,13 @@ async function startDatabase() {
 
 startDatabase();
 
-// Basic route
-app.get('/api/health', (req, res) => {
-  res.json({ message: 'Server is running' });
-});
-
 // ==================== HEALTH CHECK & API INFO ====================
-// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
     message: 'Job Portal API is running',
     timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
   });
 });
 
@@ -375,15 +396,30 @@ app.get('/api', (req, res) => {
 });
 
 // API routes
-app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/auth', authLimiter, require('./routes/authRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/companies', require('./routes/companyRoutes'));
 
-// Error handling middleware
+// Structured error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  console.error(`[ERROR] ${req.method} ${req.path}:`, err.message);
+  
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message });
+  }
+  if (err.name === 'CastError') {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+  if (err.code === 11000) {
+    return res.status(409).json({ error: 'Duplicate entry' });
+  }
+  
+  res.status(err.status || 500).json({ 
+    error: process.env.NODE_ENV === 'production' 
+      ? 'Internal server error' 
+      : err.message || 'Something went wrong!'
+  });
 });
 
 // 404 handler

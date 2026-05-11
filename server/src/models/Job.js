@@ -93,4 +93,18 @@ const jobSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Text index for full-text search
+jobSchema.index({
+  title: 'text',
+  company: 'text',
+  description: 'text',
+  location: 'text',
+  requirements: 'text',
+});
+
+// Compound index for common queries
+jobSchema.index({ jobType: 1, experienceLevel: 1, createdAt: -1 });
+jobSchema.index({ postedBy: 1, createdAt: -1 });
+jobSchema.index({ 'applications.userId': 1 });
+
 module.exports = mongoose.model('Job', jobSchema);

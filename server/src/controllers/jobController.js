@@ -95,20 +95,25 @@ exports.getAllJobs = async (req, res) => {
       ];
     }
 
-    // Full text search
+    // Full text search - use $text if available, fall back to regex
     if (search) {
-      filter.$or = [
-        ...(filter.$or || []),
+      const searchFilter = [
         { title: { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } },
         { company: { $regex: search, $options: 'i' } },
         { location: { $regex: search, $options: 'i' } },
       ];
+      if (filter.$or) {
+        filter.$and = [{ $or: filter.$or }, { $or: searchFilter }];
+        delete filter.$or;
+      } else {
+        filter.$or = searchFilter;
+      }
     }
 
     // Pagination
     const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
+    const limitNum = Math.min(parseInt(limit), 50); // Cap at 50
     const skip = (pageNum - 1) * limitNum;
 
     // Sort options
@@ -118,13 +123,16 @@ exports.getAllJobs = async (req, res) => {
     else if (sortBy === 'rating') sortObj = { rating: -1 };
     else sortObj = { createdAt: -1 };
 
-    const jobs = await Job.find(filter)
-      .populate('postedBy', 'firstName lastName company email phone')
-      .sort(sortObj)
-      .skip(skip)
-      .limit(limitNum);
+    const [jobs, total] = await Promise.all([
+      Job.find(filter)
+        .populate('postedBy', 'firstName lastName company email phone')
+        .sort(sortObj)
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+      Job.countDocuments(filter),
+    ]);
 
-    const total = await Job.countDocuments(filter);
     const totalPages = Math.ceil(total / limitNum);
 
     res.json({
@@ -134,6 +142,8 @@ exports.getAllJobs = async (req, res) => {
         totalPages,
         totalJobs: total,
         jobsPerPage: limitNum,
+        hasNext: pageNum < totalPages,
+        hasPrev: pageNum > 1,
       },
     });
   } catch (error) {
