@@ -2,8 +2,11 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usersAPI, jobsAPI } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
+import GridBackground from '../components/GridBackground';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { timeAgo } from '@/lib/dateUtils';
 import { 
   FileText, 
   Bookmark, 
@@ -14,12 +17,14 @@ import {
   Clock, 
   Loader2, 
   AlertCircle,
-  X
+  X,
+  LayoutDashboard
 } from 'lucide-react';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const toast = useToast();
   const [userData, setUserData] = useState(null);
   const [userJobs, setUserJobs] = useState([]);
   const [applications, setApplications] = useState([]);
@@ -127,9 +132,10 @@ const DashboardPage = () => {
       await jobsAPI.deleteJob(deleteDialog.id);
       setUserJobs(userJobs.filter(job => job._id !== deleteDialog.id));
       setDeleteDialog({ open: false, type: null, id: null });
+      toast.success('Job deleted successfully');
     } catch (err) {
       console.error('Error deleting job:', err);
-      alert('Failed to delete job');
+      toast.error('Failed to delete job');
     }
   };
 
@@ -171,12 +177,20 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2">
-          Dashboard
-        </h1>
-      </div>
+    <div>
+      <GridBackground className="border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+          <div className="flex items-center gap-3 mb-2">
+            <LayoutDashboard className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
+              Dashboard
+            </h1>
+          </div>
+          <p className="text-muted-foreground text-lg">Welcome back, {userData?.firstName || user?.firstName}. Here's your overview.</p>
+        </div>
+      </GridBackground>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
       {error && (
         <div className="bg-destructive/15 text-destructive text-sm p-4 rounded-md mb-8 flex items-start gap-3 border border-destructive/20">
@@ -468,6 +482,7 @@ const DashboardPage = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './components/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
@@ -22,10 +23,11 @@ import AdminDashboard from './pages/AdminDashboard';
 function App() {
   return (
     <AuthProvider>
+      <ToastProvider>
       <Router future={{ v7_startTransition: true }}>
-        <div className="flex flex-col min-h-screen bg-background text-foreground antialiased font-sans selection:bg-primary/30">
+        <div className="flex flex-col min-h-screen bg-background text-foreground antialiased selection:bg-primary/30">
           <Navbar />
-          <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="flex-1 w-full">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/jobs" element={<JobsPage />} />
@@ -93,6 +95,7 @@ function App() {
           </main>
         </div>
       </Router>
+      </ToastProvider>
     </AuthProvider>
   );
 }

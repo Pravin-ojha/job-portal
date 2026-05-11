@@ -1,10 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bookmark, Briefcase } from 'lucide-react';
+import { Bookmark, Briefcase, Clock } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from './Toast';
 import JobApplicationForm from './JobApplicationForm';
 import { jobsAPI } from '../services/api';
 import { addSavedJobLocal, removeSavedJobLocal } from '../services/storageService';
+import { timeAgo } from '@/lib/dateUtils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
@@ -18,6 +20,7 @@ const JobCard = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const toast = useToast();
   const [isJobSaved, setIsJobSaved] = useState(isSaved);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [submittingApplication, setSubmittingApplication] = useState(false);
@@ -70,13 +73,13 @@ const JobCard = ({
         email: user.email,
       });
       setShowApplicationForm(false);
-      alert('Application submitted successfully!');
+      toast.success('Application submitted successfully!');
       if (onApplySuccess) {
         onApplySuccess();
       }
     } catch (err) {
       console.error('Error applying for job:', err);
-      alert(err.response?.data?.error || 'Failed to apply for job');
+      toast.error(err.response?.data?.error || 'Failed to apply for job');
     } finally {
       setSubmittingApplication(false);
     }
@@ -138,9 +141,16 @@ const JobCard = ({
             </div>
           )}
 
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
             {job.description}
           </p>
+
+          {job.createdAt && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {timeAgo(job.createdAt)}
+            </p>
+          )}
 
           {applicationStatus && (
             <div className="mt-4">
